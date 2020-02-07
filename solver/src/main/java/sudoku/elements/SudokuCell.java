@@ -16,6 +16,7 @@ public class SudokuCell {
 
 	public void solveCell(String value) {
 		this.value = value;
+		// TODO maybe remove candidates as well? may be unnecessary
 	}
 
 	public List<String> getCandidates() {

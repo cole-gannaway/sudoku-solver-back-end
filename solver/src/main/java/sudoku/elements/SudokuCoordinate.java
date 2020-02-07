@@ -8,6 +8,10 @@ public class SudokuCoordinate implements Comparable<SudokuCoordinate> {
 		this.xCoordinate = xCoordinate;
 		this.yCoordinate = yCoordinate;
 	}
+	public SudokuCoordinate(SudokuCoordinate objToClone) {
+		this.xCoordinate = objToClone.xCoordinate;
+		this.yCoordinate = objToClone.yCoordinate;
+	}
 
 	public int compareTo(SudokuCoordinate b) {
 		int result = 0;

@@ -1,6 +1,9 @@
 package sudoku.elements;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 import sudoku.enums.EBoardType;
@@ -28,12 +31,33 @@ public class SudokuCellDataBase {
 		return cells.size();
 	}
 
+	public List<List<SudokuCoordinate>> getListOfListOfCoordinates(int n) {
+		ArrayList<List<SudokuCoordinate>> bigList = new ArrayList<List<SudokuCoordinate>>();
+		List<SudokuCoordinate> smallList = new ArrayList<SudokuCoordinate>();
+
+		int coordsPer = cells.size() / n;
+		Iterator<SudokuCoordinate> it = cells.keySet().iterator();
+		while (it.hasNext()) {
+			SudokuCoordinate objToClone = it.next();
+			smallList.add(new SudokuCoordinate(objToClone));
+			if (smallList.size() == coordsPer) {
+				bigList.add(smallList);
+				smallList = new ArrayList<SudokuCoordinate>();
+			}
+		}
+		// add it to the last list
+		if (smallList.size() != 0) {
+			bigList.get(bigList.size() - 1).addAll(smallList);
+		}
+
+		return bigList;
+	}
+
 	public String toHTML() {
 		StringBuilder strBuilder = new StringBuilder();
 		strBuilder.append("<html>");
 		strBuilder.append("<head>");
 		strBuilder.append("<style>");
-//		+ (int) Math.sqrt(n) + 
 		strBuilder.append("td {  height:30px;  width:30px;  border:1px solid;  text-align:center;}");
 		strBuilder.append("td:first-child {  border-left:solid;}");
 		strBuilder.append("td:nth-child(" + (int) Math.sqrt(n) + "n) {  border-right:solid ;}");
