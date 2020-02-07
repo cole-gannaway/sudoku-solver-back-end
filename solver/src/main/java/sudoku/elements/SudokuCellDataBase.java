@@ -3,21 +3,25 @@ package sudoku.elements;
 import java.util.HashMap;
 import java.util.Map;
 
+import sudoku.enums.EBoardType;
+
 public class SudokuCellDataBase {
-	private final Integer n;
-	private Map<SudokuCoordinate, SudokuCell> cells;
+	private final int n;
+	private final EBoardType boardType;
+	private Map<SudokuCoordinate, SudokuCell> cells = new HashMap<SudokuCoordinate, SudokuCell>();
 
-	public SudokuCellDataBase(Integer n) {
+	public SudokuCellDataBase(EBoardType boardType, int n) {
 		this.n = n;
-		cells = new HashMap<SudokuCoordinate, SudokuCell>();
+		this.boardType = boardType;
 	}
 
-	public void addCell(SudokuCell newCell, SudokuCoordinate coordinate) {
-		cells.put(coordinate, newCell);
+	public void solveCell(SudokuCoordinate coordinate, String value) {
+		SudokuCell cell = cells.get(coordinate);
+		cell.solveCell(value);
 	}
 
-	public SudokuCell getCell(SudokuCoordinate coordinate) {
-		return cells.get(coordinate);
+	public void addCell(SudokuCoordinate coordinate) {
+		cells.put(coordinate, new SudokuCell(boardType, n));
 	}
 
 	public int size() {
@@ -58,5 +62,4 @@ public class SudokuCellDataBase {
 		return strBuilder.toString();
 
 	}
-
 }

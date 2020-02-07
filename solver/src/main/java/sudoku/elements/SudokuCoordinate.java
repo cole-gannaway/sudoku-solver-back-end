@@ -20,7 +20,6 @@ public class SudokuCoordinate implements Comparable<SudokuCoordinate> {
 		return result;
 	}
 
-	
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -48,8 +47,7 @@ public class SudokuCoordinate implements Comparable<SudokuCoordinate> {
 
 	@Override
 	public String toString() {
-		return  "{" + xCoordinate + "," + yCoordinate + "}";
+		return "{" + xCoordinate + "," + yCoordinate + "}";
 	}
-	
-	
+
 }
