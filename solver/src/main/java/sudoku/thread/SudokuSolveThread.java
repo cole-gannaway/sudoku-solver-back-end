@@ -7,6 +7,7 @@ import java.util.concurrent.Callable;
 
 import sudoku.elements.SudokuCellDataBase;
 import sudoku.elements.SudokuCoordinate;
+import sudoku.enums.ESudokuSolveStep;
 import sudoku.solving.utils.SudokuSolvingUtils;
 
 public class SudokuSolveThread implements Callable<Boolean> {
@@ -25,13 +26,17 @@ public class SudokuSolveThread implements Callable<Boolean> {
 			ListIterator<SudokuCoordinate> it = coords.listIterator();
 			while (it.hasNext()) {
 				SudokuCoordinate coordinate = it.next();
-				List<SudokuSolveStep> steps = Arrays.asList(SudokuSolveStep.values());
-				for (SudokuSolveStep step : steps) {
+				List<ESudokuSolveStep> steps = Arrays.asList(ESudokuSolveStep.values());
+				for (ESudokuSolveStep step : steps) {
 					switch (step) {
+					case SETCANDIDATES:
+						SudokuSolvingUtils.setCandidates(db, coordinate);
 					case UNIQUECANDIDATE:
-						SudokuSolvingUtils.isUniqueCandidate(db, coordinate);
+						String uniqueCandidate = SudokuSolvingUtils.hasUniqueCandidate(db, coordinate);
+						if (uniqueCandidate != null) {
+							db.solveCell(coordinate, uniqueCandidate);
+						}
 						break;
-
 					default:
 						break;
 					}

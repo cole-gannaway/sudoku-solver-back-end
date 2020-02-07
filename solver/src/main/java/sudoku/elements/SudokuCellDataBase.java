@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 
 import sudoku.enums.EBoardType;
+import sudoku.enums.ESudokuSection;
 
 public class SudokuCellDataBase {
 	private final int n;
@@ -18,6 +19,11 @@ public class SudokuCellDataBase {
 		this.boardType = boardType;
 	}
 
+	public void removeCandidateFromCell(SudokuCoordinate coordinate, String value) {
+		SudokuCell cell = cells.get(coordinate);
+		cell.removeCandidate(value);
+	}
+
 	public void solveCell(SudokuCoordinate coordinate, String value) {
 		SudokuCell cell = cells.get(coordinate);
 		cell.solveCell(value);
@@ -27,11 +33,24 @@ public class SudokuCellDataBase {
 		cells.put(coordinate, new SudokuCell(EBoardType.getPossibleCandidateValues(boardType, n)));
 	}
 
+	public String getCellValue(SudokuCoordinate coordinate) {
+		String retVal = null;
+		SudokuCell cell = cells.get(coordinate);
+		if (cell.isSolved()) {
+			retVal = cell.getValue();
+		}
+		return retVal;
+	}
+
+	public List<String> getCandidatesForCell(SudokuCoordinate coordinate) {
+		return cells.get(coordinate).getCandidates();
+	}
+
 	public int size() {
 		return cells.size();
 	}
 
-	public List<List<SudokuCoordinate>> getListOfListOfCoordinates(int n) {
+	public List<List<SudokuCoordinate>> splitCoordinatesForNThreads(int n) {
 		ArrayList<List<SudokuCoordinate>> bigList = new ArrayList<List<SudokuCoordinate>>();
 		List<SudokuCoordinate> smallList = new ArrayList<SudokuCoordinate>();
 
@@ -51,6 +70,43 @@ public class SudokuCellDataBase {
 		}
 
 		return bigList;
+	}
+
+	public List<SudokuCoordinate> generateCoordinatesForSegment(SudokuCoordinate coord,
+			List<ESudokuSection> listOfSegments) {
+		List<SudokuCoordinate> retList = new ArrayList<SudokuCoordinate>();
+		for (ESudokuSection segment : listOfSegments) {
+			switch (segment) {
+			case ROW:
+				for (int i = 1; i <= n; i++) {
+					if (i != coord.getxCoordinate())
+						retList.add(new SudokuCoordinate(i, coord.getyCoordinate()));
+				}
+				break;
+			case COLUMN:
+				for (int i = 1; i <= n; i++) {
+					if (i != coord.getyCoordinate())
+						retList.add(new SudokuCoordinate(coord.getxCoordinate(), i));
+				}
+				break;
+			case SQUARE:
+				int sqSize = (int) Math.round(Math.sqrt(n));
+				SudokuCoordinate topLeft = SudokuCoordinate.getTopLeftOfSquare(coord, sqSize);
+				for (int x = 0; x < sqSize; x++) {
+					for (int y = 0; y < sqSize; y++) {
+						int xCoord = topLeft.getxCoordinate() + x;
+						int yCoord = topLeft.getyCoordinate() + y;
+						if (xCoord != coord.getxCoordinate() || yCoord != coord.getyCoordinate()) {
+							retList.add(new SudokuCoordinate(xCoord, yCoord));
+						}
+					}
+				}
+				break;
+			default:
+				break;
+			}
+		}
+		return retList;
 	}
 
 	public String toHTML() {

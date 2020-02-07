@@ -19,6 +19,16 @@ public class Candidates {
 		return null;
 	}
 
+	public String removeAllExcept(String value) {
+		if (candidateVals.contains(value)) {
+			candidateVals.removeIf(val -> !(val.equals(value)));
+			return candidateVals.get(0);
+		} else {
+			System.err.println("Candidates: (removeAllExcept) Value = " + value + " does not exist in candidates");
+			return null;
+		}
+	}
+
 	public List<String> deepCopyList() {
 		return new ArrayList<String>(candidateVals);
 	}

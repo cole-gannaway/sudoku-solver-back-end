@@ -42,7 +42,7 @@ public class SudokuThreadManager {
 
 	private List<SudokuSolveThread> createThreads() {
 		ArrayList<SudokuSolveThread> retList = new ArrayList<SudokuSolveThread>();
-		List<List<SudokuCoordinate>> coords = db.getListOfListOfCoordinates(numOfThreads);
+		List<List<SudokuCoordinate>> coords = db.splitCoordinatesForNThreads(numOfThreads);
 		for (int i = 0; i < numOfThreads; i++) {
 			retList.add(new SudokuSolveThread(db, coords.get(i)));
 		}

@@ -8,9 +8,18 @@ public class SudokuCoordinate implements Comparable<SudokuCoordinate> {
 		this.xCoordinate = xCoordinate;
 		this.yCoordinate = yCoordinate;
 	}
+
 	public SudokuCoordinate(SudokuCoordinate objToClone) {
 		this.xCoordinate = objToClone.xCoordinate;
 		this.yCoordinate = objToClone.yCoordinate;
+	}
+
+	public int getxCoordinate() {
+		return xCoordinate;
+	}
+
+	public int getyCoordinate() {
+		return yCoordinate;
 	}
 
 	public int compareTo(SudokuCoordinate b) {
@@ -22,6 +31,21 @@ public class SudokuCoordinate implements Comparable<SudokuCoordinate> {
 			result = yCoordinateCompare;
 		}
 		return result;
+	}
+
+	public static SudokuCoordinate getTopLeftOfSquare(SudokuCoordinate coord, int sqSize) {
+		int x = truncateBySize(coord.getxCoordinate(), sqSize);
+		int y = truncateBySize(coord.getyCoordinate(), sqSize);
+		return new SudokuCoordinate(x, y);
+	}
+
+	private static int truncateBySize(int pos, int sqSize) {
+//		1,2,3 => 1  sqIndex 0
+//		4,5,6 => 4  sqIndex 1
+//		7,8,9 => 7  sqIndex 2 
+		int sqIndex = (pos - 1) / sqSize;
+		return (sqIndex * sqSize) + 1;
+
 	}
 
 	@Override
