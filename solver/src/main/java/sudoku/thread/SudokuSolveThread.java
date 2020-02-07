@@ -31,6 +31,7 @@ public class SudokuSolveThread implements Callable<Boolean> {
 					switch (step) {
 					case SETCANDIDATES:
 						SudokuSolvingUtils.setCandidates(db, coordinate);
+						break;
 					case UNIQUECANDIDATE:
 						String uniqueCandidate = SudokuSolvingUtils.hasUniqueCandidate(db, coordinate);
 						if (uniqueCandidate != null) {
