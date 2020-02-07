@@ -55,10 +55,40 @@ public class SudokuThreadManagerTest {
 
 		int numOfThreads = 1;
 		SudokuThreadManager threadManager = new SudokuThreadManager(dataBase, numOfThreads);
-		threadManager.solve(30, TimeUnit.SECONDS);
+//		long startTimeMillis = System.currentTimeMillis();
+		threadManager.solve(3, TimeUnit.SECONDS);
+//		Long executionTimeMillis = System.currentTimeMillis() - startTimeMillis;
 
+		// test output
+		File answerFile = CommonTestUtils.getTestFile(fileInfo.getAnswerFilePath());
+		List<String[]> expectedFields = CSVParser.parseFile(answerFile);
+		SudokuCellDataBase expectedDataBase = SudokuCellDataBaseBuilder.buildDataBase(expectedFields, boardType);
+		assertTrue(CommonTestUtils.compareCSVOutputs(dataBase, expectedDataBase));
+	}
+
+	@Test
+	public void testSolveMultiThread() throws IOException {
+		// set up
+		String lookUpId = "EvilPuzzle";
+		Optional<TestFileParsedInfo> optFileInfo = configFileInfos.stream()
+				.filter(info -> info.getId().equals(lookUpId)).findFirst();
+		assertTrue(optFileInfo.isPresent());
+		TestFileParsedInfo fileInfo = optFileInfo.get();
+		File testFile = CommonTestUtils.getTestFile(fileInfo.getPuzzleFilePath());
+		List<String[]> fields = CSVParser.parseFile(testFile);
+		EBoardType boardType = EBoardType.SUDOKU;
+		SudokuCellDataBase dataBase = SudokuCellDataBaseBuilder.buildDataBase(fields, boardType);
+		CommonTestUtils.setCandidatesOnAllCells(dataBase);
+
+		int numOfThreads = 4;
+		SudokuThreadManager threadManager = new SudokuThreadManager(dataBase, numOfThreads);
+		long startTimeMillis = System.currentTimeMillis();
+		threadManager.solve(5, TimeUnit.SECONDS);
+		Long executionTimeMillis = System.currentTimeMillis() - startTimeMillis;
+		
 		String htmlFileName = "after.html";
-		CommonTestUtils.saveHTMLFileAsOutput(htmlFileName, dataBase.toHTML());
+		String html = dataBase.toHTML(lookUpId + " - MultiThread", executionTimeMillis.toString() + " ms");
+		CommonTestUtils.saveHTMLFileAsOutput(htmlFileName, html);
 		CommonTestUtils.openHTMLFileInBrowser(htmlFileName);
 
 		// test output

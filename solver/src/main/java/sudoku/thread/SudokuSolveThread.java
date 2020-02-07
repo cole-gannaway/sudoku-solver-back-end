@@ -11,14 +11,16 @@ import sudoku.enums.ESudokuSolveStep;
 import sudoku.solving.utils.SudokuSolvingUtils;
 
 public class SudokuSolveThread implements Callable<Boolean> {
-	List<SudokuCoordinate> coords;
-	SudokuCellDataBase db;
-	long startTime = System.currentTimeMillis();
-	long printInterval = TimeUnit.SECONDS.toMillis(1);
+	private List<SudokuCoordinate> coords;
+	private SudokuCellDataBase db;
+	private long startTime = System.currentTimeMillis();
+	private long printInterval = TimeUnit.SECONDS.toMillis(1);
+	private final Integer threadId;
 
-	public SudokuSolveThread(SudokuCellDataBase db, List<SudokuCoordinate> coords) {
+	public SudokuSolveThread(SudokuCellDataBase db, List<SudokuCoordinate> coords, int id) {
 		this.coords = coords;
 		this.db = db;
+		threadId = id;
 	}
 
 	@Override
@@ -56,12 +58,12 @@ public class SudokuSolveThread implements Callable<Boolean> {
 					}
 				}
 				if (isSolved) {
-					System.out.println("removing " + coordinate + ", " + coords.size() + " left to go.");
 					it.remove();
 				} else {
 					long currentTimeMillis = System.currentTimeMillis();
 					if (currentTimeMillis - lastPrintTime > printInterval) {
-						System.out.println(coords.size() + " left to go.");
+						System.out.println(
+								"Solving update: " + coords.size() + " unsolved cells left for threadId = " + threadId);
 						lastPrintTime = currentTimeMillis;
 					}
 				}

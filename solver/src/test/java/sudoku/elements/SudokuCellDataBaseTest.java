@@ -26,10 +26,6 @@ public class SudokuCellDataBaseTest {
 		List<String[]> fields = CSVParser.parseFile(testFile);
 		SudokuCellDataBase dataBase = SudokuCellDataBaseBuilder.buildDataBase(fields, EBoardType.SUDOKU);
 		assertEquals(81, dataBase.size());
-		String htmlFileName = "before.html";
-		CommonTestUtils.saveHTMLFileAsOutput(htmlFileName, dataBase.toHTML());
-		CommonTestUtils.openHTMLFileInBrowser(htmlFileName);
-
 	}
 
 	@Test

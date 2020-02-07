@@ -116,9 +116,18 @@ public class SudokuCellDataBase {
 	}
 
 	public String toHTML() {
+		return toHTML(null, null);
+	}
+
+	public String toHTML(String lookUpId, String string) {
 		StringBuilder strBuilder = new StringBuilder();
 		strBuilder.append("<html>");
 		strBuilder.append("<head>");
+		if (lookUpId != null) {
+			strBuilder.append("<title>");
+			strBuilder.append(lookUpId);
+			strBuilder.append("</title>");
+		}
 		strBuilder.append("<style>");
 		strBuilder.append("td {  height:30px;  width:30px;  border:1px solid;  text-align:center;}");
 		strBuilder.append("td:first-child {  border-left:solid;}");
@@ -126,6 +135,17 @@ public class SudokuCellDataBase {
 		strBuilder.append("tr:first-child {  border-top:solid;}");
 		strBuilder.append("tr:nth-child(" + (int) Math.sqrt(n) + "n) td {  border-bottom:solid ;}");
 		strBuilder.append("</style>");
+		strBuilder.append("</head>");
+		if (lookUpId != null) {
+			strBuilder.append("<h1>");
+			strBuilder.append(lookUpId);
+			strBuilder.append("</h1>");
+		}
+		if (string != null) {
+			strBuilder.append("<p>");
+			strBuilder.append("Execution Time: " + string);
+			strBuilder.append("</p>");
+		}
 		strBuilder.append("<table border=\"1|0\">");
 
 		for (int x = 1; x <= n; x++) {
