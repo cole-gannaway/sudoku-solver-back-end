@@ -5,6 +5,10 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
+import sudoku.elements.SudokuCellDataBase;
+import sudoku.elements.SudokuCoordinate;
+import sudoku.enums.EBoardType;
+
 public class CommonTestUtils {
 	private static String basePath = "src/test/resources";
 
@@ -23,5 +27,15 @@ public class CommonTestUtils {
 		byte[] bytes = htmlString.getBytes();
 		outputStream.write(bytes);
 		outputStream.close();
+	}
+
+	public static SudokuCellDataBase createFakeSudokuDataBase(int n) {
+		SudokuCellDataBase db = new SudokuCellDataBase(EBoardType.SUDOKU, n);
+		for (int x = 1; x <= n; x++) {
+			for (int y = 1; y <= n; y++) {
+				db.addCell(new SudokuCoordinate(x, y));
+			}
+		}
+		return db;
 	}
 }
