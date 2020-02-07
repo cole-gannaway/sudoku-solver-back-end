@@ -2,14 +2,12 @@ package sudoku.elements;
 
 import java.util.List;
 
-import sudoku.enums.EBoardType;
-
 public class SudokuCell {
 	private String value;
 	private Candidates candidates;
 
-	SudokuCell(EBoardType boardType, int n) {
-		candidates = new Candidates(boardType, n);
+	public SudokuCell(List<String> possibleCandidateValues) {
+		candidates = new Candidates(possibleCandidateValues);
 	}
 
 	public String getValue() {
@@ -19,8 +17,8 @@ public class SudokuCell {
 	public void solveCell(String value) {
 		this.value = value;
 	}
-	
-	public List<String> getCandidates(){
+
+	public List<String> getCandidates() {
 		return candidates.deepCopyList();
 	}
 

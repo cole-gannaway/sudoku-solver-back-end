@@ -3,14 +3,12 @@ package sudoku.elements;
 import java.util.ArrayList;
 import java.util.List;
 
-import sudoku.enums.EBoardType;
-
 public class Candidates {
 
 	List<String> candidateVals;
 
-	public Candidates(EBoardType boardType, int n) {
-		candidateVals = EBoardType.getPossibleCandidateValues(boardType, n);
+	public Candidates(List<String> candidateVals) {
+		this.candidateVals = candidateVals;
 	}
 
 	public String remove(String value) {

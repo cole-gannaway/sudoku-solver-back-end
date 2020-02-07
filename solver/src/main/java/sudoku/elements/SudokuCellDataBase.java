@@ -21,7 +21,7 @@ public class SudokuCellDataBase {
 	}
 
 	public void addCell(SudokuCoordinate coordinate) {
-		cells.put(coordinate, new SudokuCell(boardType, n));
+		cells.put(coordinate, new SudokuCell(EBoardType.getPossibleCandidateValues(boardType, n)));
 	}
 
 	public int size() {
