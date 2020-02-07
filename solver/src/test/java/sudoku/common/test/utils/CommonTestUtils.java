@@ -50,4 +50,13 @@ public class CommonTestUtils {
 			}
 		}
 	}
+
+	public static boolean compareCSVOutputs(SudokuCellDataBase actualDataBase, SudokuCellDataBase expectedDataBase) {
+		List<String[]> expectedList = actualDataBase.toCSV();
+		List<String[]> actualList = expectedList;
+		return expectedList.equals(actualList);
+	}
+	
+	
+	
 }

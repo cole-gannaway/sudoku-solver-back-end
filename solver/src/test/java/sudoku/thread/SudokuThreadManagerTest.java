@@ -1,5 +1,7 @@
 package sudoku.thread;
 
+import static org.junit.Assert.assertTrue;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
@@ -30,17 +32,25 @@ public class SudokuThreadManagerTest {
 	@Test
 	public void testSolveSingleThread() throws IOException {
 		// set up
-		File testFile = CommonTestUtils.getTestFile("4by4/Easy.csv");
+		File testFile = CommonTestUtils.getTestFile("9by9/Puzzles/EasyPuzzle.csv");
 		List<String[]> fields = CSVParser.parseFile(testFile);
-		SudokuCellDataBase dataBase = SudokuCellDataBaseBuilder.buildDataBase(fields, EBoardType.SUDOKU);
+		EBoardType boardType = EBoardType.SUDOKU;
+		SudokuCellDataBase dataBase = SudokuCellDataBaseBuilder.buildDataBase(fields, boardType);
+		CommonTestUtils.setCandidatesOnAllCells(dataBase);
 
 		int numOfThreads = 1;
 		SudokuThreadManager threadManager = new SudokuThreadManager(dataBase, numOfThreads);
-		threadManager.solve(10, TimeUnit.SECONDS);
-		
+		threadManager.solve(30, TimeUnit.SECONDS);
+
 		String htmlFileName = "after.html";
 		CommonTestUtils.saveHTMLFileAsOutput(htmlFileName, dataBase.toHTML());
 		CommonTestUtils.openHTMLFileInBrowser(htmlFileName);
+
+		// test output
+		File answerFile = CommonTestUtils.getTestFile("9by9/Answers/EasyPuzzleAnswer.csv");
+		List<String[]> expectedFields = CSVParser.parseFile(answerFile);
+		SudokuCellDataBase expectedDataBase = SudokuCellDataBaseBuilder.buildDataBase(expectedFields, boardType);
+		assertTrue(CommonTestUtils.compareCSVOutputs(dataBase, expectedDataBase));
 	}
 
 }

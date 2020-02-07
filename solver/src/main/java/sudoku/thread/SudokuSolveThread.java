@@ -44,6 +44,12 @@ public class SudokuSolveThread implements Callable<Boolean> {
 							isSolved = true;
 						}
 						break;
+					case HIDDENSET:
+						List<String> hiddenSet = SudokuSolvingUtils.findHiddenSet(db, coordinate);
+						if (hiddenSet != null) {
+							db.removeAllOtherCandidatesFromCell(coordinate, hiddenSet);
+						}
+						break;
 					default:
 						break;
 

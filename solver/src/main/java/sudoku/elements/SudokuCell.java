@@ -19,8 +19,14 @@ public class SudokuCell {
 		candidates.removeAllExcept(value);
 	}
 
-	public List<String> getCandidates() {
-		return candidates.deepCopyList();
+	public void removeAllOtherCandidates(List<String> set) {
+		if (!isSolved()) {
+			String val = candidates.removeAllOthers(set);
+			if (val != null) {
+				value = val;
+			}
+		}
+
 	}
 
 	public void removeCandidate(String value) {
@@ -32,8 +38,19 @@ public class SudokuCell {
 		}
 	}
 
+	public List<String> getCandidates() {
+		return candidates.deepCopyList();
+	}
+
 	public boolean isSolved() {
 		return value != null;
 	}
+
+	@Override
+	public String toString() {
+		return value;
+	}
+	
+	
 
 }

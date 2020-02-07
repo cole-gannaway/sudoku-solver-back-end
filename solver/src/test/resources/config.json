@@ -1,0 +1,40 @@
+{
+    "testConfigs" : [
+        {
+            "id" : "EasyPuzzle",
+            "puzzle" : {
+                "filepath" : "9by9/Puzzles/EasyPuzzle.csv"
+            },
+            "answer" : {
+                "filepath" : "9by9/Answers/EasyPuzzleAnswer.csv"
+            }
+        },
+        {
+            "id" : "MediumPuzzle",
+            "puzzle" : {
+                "filepath" : "9by9/Puzzles/MediumPuzzle.csv"
+            },
+            "answer" : {
+                "filepath" : "9by9/Answers/MediumPuzzleAnswer.csv"
+            }
+        },
+        {
+            "id" : "HardPuzzle",
+            "puzzle" : {
+                "filepath" : "9by9/Puzzles/HardPuzzle.csv"
+            },
+            "answer" : {
+                "filepath" : "9by9/Answers/HardPuzzleAnswer.csv"
+            }
+        },
+        {
+            "id" : "EvilPuzzle",
+            "puzzle" : {
+                "filepath" : "9by9/Puzzles/EvilPuzzle.csv"
+            },
+            "answer" : {
+                "filepath" : "9by9/Answers/EvilPuzzleAnswer.csv"
+            }
+        }
+    ]
+}

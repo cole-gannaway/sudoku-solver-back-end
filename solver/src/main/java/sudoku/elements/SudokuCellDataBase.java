@@ -8,6 +8,7 @@ import java.util.Map;
 
 import sudoku.enums.EBoardType;
 import sudoku.enums.ESudokuSection;
+import sudoku.parsing.CSVParser;
 
 public class SudokuCellDataBase {
 	private final int n;
@@ -27,6 +28,11 @@ public class SudokuCellDataBase {
 	public void solveCell(SudokuCoordinate coordinate, String value) {
 		SudokuCell cell = cells.get(coordinate);
 		cell.solveCell(value);
+	}
+
+	public void removeAllOtherCandidatesFromCell(SudokuCoordinate coordinate, List<String> set) {
+		SudokuCell cell = cells.get(coordinate);
+		cell.removeAllOtherCandidates(set);
 	}
 
 	public void addCell(SudokuCoordinate coordinate) {
@@ -72,7 +78,7 @@ public class SudokuCellDataBase {
 		return bigList;
 	}
 
-	public List<SudokuCoordinate> generateCoordinatesForSegment(SudokuCoordinate coord,
+	public List<SudokuCoordinate> generateCoordinatesForSection(SudokuCoordinate coord,
 			List<ESudokuSection> listOfSegments) {
 		List<SudokuCoordinate> retList = new ArrayList<SudokuCoordinate>();
 		for (ESudokuSection segment : listOfSegments) {
@@ -142,4 +148,26 @@ public class SudokuCellDataBase {
 		return strBuilder.toString();
 
 	}
+
+	public List<String[]> toCSV() {
+		List<String[]> retVal = new ArrayList<String[]>();
+		for (int x = 1; x <= n; x++) {
+			StringBuilder strBuilder = new StringBuilder();
+			for (int y = 1; y <= n; y++) {
+				String value = getCellValue(new SudokuCoordinate(x, y));
+				if (value != null) {
+					strBuilder.append(value);
+				}
+				// don't add a comma after the last one
+				if (y != n) {
+					strBuilder.append(",");
+				}
+			}
+			String line = strBuilder.toString();
+			retVal.add(CSVParser.splitLine(line));
+		}
+		return retVal;
+
+	}
+
 }

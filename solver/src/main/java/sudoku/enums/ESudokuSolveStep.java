@@ -1,5 +1,5 @@
 package sudoku.enums;
 
 public enum ESudokuSolveStep {
-	SETCANDIDATES, UNIQUECANDIDATE;
+	SETCANDIDATES, UNIQUECANDIDATE, HIDDENSET;
 }

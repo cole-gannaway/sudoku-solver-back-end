@@ -33,4 +33,16 @@ public class Candidates {
 		return new ArrayList<String>(candidateVals);
 	}
 
+	public String removeAllOthers(final List<String> set) {
+		candidateVals.removeIf(val -> !set.contains(val));
+		if (candidateVals.size() == 0) {
+			System.err.println("Candidates: (removeAllOthers) set = " + set + " removed all remaining values");
+			return null;
+		} else if (candidateVals.size() == 1) {
+			return candidateVals.get(0);
+		} else {
+			return null;
+		}
+	}
+
 }

@@ -1,6 +1,8 @@
 package sudoku.elements;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -20,7 +22,7 @@ public class SudokuCellDataBaseTest {
 
 	@Test
 	public void test9By9() throws IOException, InterruptedException {
-		File testFile = CommonTestUtils.getTestFile("/9by9/EasyPuzzle.csv");
+		File testFile = CommonTestUtils.getTestFile("/9by9/Puzzles/EasyPuzzle.csv");
 		List<String[]> fields = CSVParser.parseFile(testFile);
 		SudokuCellDataBase dataBase = SudokuCellDataBaseBuilder.buildDataBase(fields, EBoardType.SUDOKU);
 		assertEquals(81, dataBase.size());
@@ -61,7 +63,7 @@ public class SudokuCellDataBaseTest {
 		}
 		rowExpected.remove(testCoord);
 		// call function
-		List<SudokuCoordinate> rowActual = dataBase.generateCoordinatesForSegment(testCoord,
+		List<SudokuCoordinate> rowActual = dataBase.generateCoordinatesForSection(testCoord,
 				Arrays.asList(ESudokuSection.ROW));
 
 		// verify
@@ -75,7 +77,7 @@ public class SudokuCellDataBaseTest {
 		colExpected.remove(testCoord);
 
 		// call function
-		List<SudokuCoordinate> colActual = dataBase.generateCoordinatesForSegment(testCoord,
+		List<SudokuCoordinate> colActual = dataBase.generateCoordinatesForSection(testCoord,
 				Arrays.asList(ESudokuSection.COLUMN));
 
 		// verify
@@ -92,11 +94,43 @@ public class SudokuCellDataBaseTest {
 		sqExpected.remove(testCoord);
 
 		// call function
-		List<SudokuCoordinate> sqActual = dataBase.generateCoordinatesForSegment(testCoord,
+		List<SudokuCoordinate> sqActual = dataBase.generateCoordinatesForSection(testCoord,
 				Arrays.asList(ESudokuSection.SQUARE));
 
 		// verify
 		assertEquals(sqExpected, sqActual);
+	}
+
+	@Test
+	public void testRemoveAllOtherCandidatesFromCell() {
+		// set up
+		int n = 9;
+		List<String> possibleCandidateValues = EBoardType.getPossibleCandidateValues(EBoardType.SUDOKU, n);
+		SudokuCellDataBase dataBase = CommonTestUtils.createFakeSudokuDataBase(n);
+		SudokuCoordinate testCoord = new SudokuCoordinate(1, 1);
+
+		// remove all values except one aka solve
+		List<String> oneCandidate = possibleCandidateValues.subList(0, 1);
+
+		// call function
+		dataBase.removeAllOtherCandidatesFromCell(testCoord, oneCandidate);
+
+		// verify it is solved
+		assertEquals(1, dataBase.getCandidatesForCell(testCoord).size());
+		assertNotNull(dataBase.getCellValue(testCoord));
+
+		// set up
+		testCoord = new SudokuCoordinate(1, 2);
+
+		// remove only one value
+		List<String> allButOne = possibleCandidateValues.subList(0, possibleCandidateValues.size() - 1);
+
+		// call function
+		dataBase.removeAllOtherCandidatesFromCell(testCoord, allButOne);
+
+		// verify it is solved
+		assertEquals(possibleCandidateValues.size() - 1, dataBase.getCandidatesForCell(testCoord).size());
+		assertNull(dataBase.getCellValue(testCoord));
 	}
 
 }

@@ -13,9 +13,13 @@ public class CSVParser {
 		List<String[]> rows = new ArrayList<String[]>();
 		while (sc.hasNextLine()) {
 			String line = sc.nextLine();
-			String[] split = line.split(",", -1);
+			String[] split = splitLine(line);
 			rows.add(split);
 		}
 		return rows;
+	}
+
+	public static String[] splitLine(String line) {
+		return line.split(",", -1);
 	}
 }
