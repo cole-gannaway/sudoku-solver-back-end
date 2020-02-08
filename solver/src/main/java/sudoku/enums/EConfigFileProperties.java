@@ -1,7 +1,8 @@
 package sudoku.enums;
 
 public enum EConfigFileProperties {
-	TESTCONFIGS("testConfigs"), ID("id"),PUZZLE("puzzle"),ANSWER("answer"),FILEPATH("filepath");
+	TESTCONFIGS("testConfigs"), ID("id"), PUZZLE("puzzle"), ANSWER("answer"), FILEPATH("filepath"),
+	BOARDTYPE("boardtype");
 
 	private String value;
 

@@ -13,6 +13,7 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
+import sudoku.enums.EBoardType;
 import sudoku.enums.EConfigFileProperties;
 
 public class ConfigFileReader {
@@ -32,9 +33,15 @@ public class ConfigFileReader {
 		while (it.hasNext()) {
 			JSONObject testConfig = (JSONObject) it.next();
 			String id = (String) testConfig.get(EConfigFileProperties.ID.getValue());
+			String boardTypeStr = (String) testConfig.get(EConfigFileProperties.BOARDTYPE.getValue());
 			String puzzleFilePath = getFilePath((JSONObject) testConfig.get(EConfigFileProperties.PUZZLE.getValue()));
 			String answerFilePath = getFilePath((JSONObject) testConfig.get(EConfigFileProperties.ANSWER.getValue()));
-			TestFileParsedInfo testFileInfo = new TestFileParsedInfo(id, puzzleFilePath, answerFilePath);
+			EBoardType boardType = null;
+			try {
+				boardType = EBoardType.valueOf(boardTypeStr.toUpperCase());
+			} catch (Exception e) {
+			}
+			TestFileParsedInfo testFileInfo = new TestFileParsedInfo(id, puzzleFilePath, answerFilePath, boardType);
 			retVal.add(testFileInfo);
 		}
 

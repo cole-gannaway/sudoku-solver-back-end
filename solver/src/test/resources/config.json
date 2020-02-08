@@ -2,7 +2,7 @@
 	"testConfigs": [
 		{
 			"id": "EasyPuzzle4by4",
-			"boardtype" : "Sudoku",
+			"boardtype": "Sudoku",
 			"puzzle": {
 				"filepath": "4by4/Puzzles/EasyPuzzle.csv"
 			},
@@ -12,7 +12,7 @@
 		},
 		{
 			"id": "EasyPuzzle",
-			"boardtype" : "Sudoku",
+			"boardtype": "Sudoku",
 			"puzzle": {
 				"filepath": "9by9/Puzzles/EasyPuzzle.csv"
 			},
@@ -22,7 +22,7 @@
 		},
 		{
 			"id": "MediumPuzzle",
-			"boardtype" : "Sudoku",
+			"boardtype": "Sudoku",
 			"puzzle": {
 				"filepath": "9by9/Puzzles/MediumPuzzle.csv"
 			},
@@ -32,7 +32,7 @@
 		},
 		{
 			"id": "HardPuzzle",
-			"boardtype" : "Sudoku",
+			"boardtype": "Sudoku",
 			"puzzle": {
 				"filepath": "9by9/Puzzles/HardPuzzle.csv"
 			},
@@ -42,7 +42,7 @@
 		},
 		{
 			"id": "EvilPuzzle",
-			"boardtype" : "Sudoku",
+			"boardtype": "Sudoku",
 			"puzzle": {
 				"filepath": "9by9/Puzzles/EvilPuzzle.csv"
 			},
@@ -52,24 +52,13 @@
 		},
 		{
 			"id": "EasyPuzzle16by16",
-			"boardtype" : "Sudoku",
+			"boardtype": "Hexadoku",
 			"puzzle": {
 				"filepath": "16by16/Puzzles/EasyPuzzle.csv"
 			},
 			"answer": {
 				"filepath": "16by16/Answers/EasyPuzzleAnswer.csv"
 			}
-		},
-		{
-			"id": "EasyPuzzle16by162",
-			"boardtype" : "Sudoku",
-			"puzzle": {
-				"filepath": "16by16/Puzzles/EasyPuzzle2.csv"
-			},
-			"answer": {
-				"filepath": "16by16/Answers/EasyPuzzleAnswer.csv"
-			}
 		}
-		
 	]
 }

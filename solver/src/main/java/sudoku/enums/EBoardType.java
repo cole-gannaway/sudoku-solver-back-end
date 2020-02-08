@@ -4,7 +4,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 public enum EBoardType {
-	SUDOKU, HEXADOKU;
+	SUDOKU("Sudoku"), HEXADOKU("Hexadoku");
+
+	private String value;
+
+	private EBoardType(String value) {
+		this.value = value;
+	}
 
 	public static List<String> getPossibleCandidateValues(final EBoardType type, final int n) {
 		List<String> retVal = new ArrayList<String>();
@@ -29,4 +35,9 @@ public enum EBoardType {
 		}
 		return retVal;
 	}
+
+	public String getValue() {
+		return value;
+	}
+
 }
