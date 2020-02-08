@@ -42,22 +42,27 @@ public class SudokuThreadManagerTest {
 	@Test
 	public void testSolveSingleThread() throws IOException {
 		// set up
-		String lookUpId = "EvilPuzzle";
+		String lookUpId = "EasyPuzzle16by16";
 		Optional<TestFileParsedInfo> optFileInfo = configFileInfos.stream()
 				.filter(info -> info.getId().equals(lookUpId)).findFirst();
 		assertTrue(optFileInfo.isPresent());
 		TestFileParsedInfo fileInfo = optFileInfo.get();
 		File testFile = CommonTestUtils.getTestFile(fileInfo.getPuzzleFilePath());
 		List<String[]> fields = CSVParser.parseFile(testFile);
-		EBoardType boardType = EBoardType.SUDOKU;
+		EBoardType boardType = EBoardType.HEXADOKU;
 		SudokuCellDataBase dataBase = SudokuCellDataBaseBuilder.buildDataBase(fields, boardType);
 		CommonTestUtils.setCandidatesOnAllCells(dataBase);
 
 		int numOfThreads = 1;
 		SudokuThreadManager threadManager = new SudokuThreadManager(dataBase, numOfThreads);
-//		long startTimeMillis = System.currentTimeMillis();
+		long startTimeMillis = System.currentTimeMillis();
 		threadManager.solve(3, TimeUnit.SECONDS);
-//		Long executionTimeMillis = System.currentTimeMillis() - startTimeMillis;
+		Long executionTimeMillis = System.currentTimeMillis() - startTimeMillis;
+
+		String htmlFileName = "after.html";
+		String html = dataBase.toHTML(lookUpId, executionTimeMillis.toString() + " ms");
+		CommonTestUtils.saveHTMLFileAsOutput(htmlFileName, html);
+		CommonTestUtils.openHTMLFileInBrowser(htmlFileName);
 
 		// test output
 		File answerFile = CommonTestUtils.getTestFile(fileInfo.getAnswerFilePath());
@@ -69,33 +74,28 @@ public class SudokuThreadManagerTest {
 	@Test
 	public void testSolveMultiThread() throws IOException {
 		// set up
-		String lookUpId = "EvilPuzzle";
+		String lookUpId = "EasyPuzzle";
 		Optional<TestFileParsedInfo> optFileInfo = configFileInfos.stream()
 				.filter(info -> info.getId().equals(lookUpId)).findFirst();
 		assertTrue(optFileInfo.isPresent());
 		TestFileParsedInfo fileInfo = optFileInfo.get();
 		File testFile = CommonTestUtils.getTestFile(fileInfo.getPuzzleFilePath());
 		List<String[]> fields = CSVParser.parseFile(testFile);
-		EBoardType boardType = EBoardType.SUDOKU;
+		EBoardType boardType = EBoardType.HEXADOKU;
 		SudokuCellDataBase dataBase = SudokuCellDataBaseBuilder.buildDataBase(fields, boardType);
 		CommonTestUtils.setCandidatesOnAllCells(dataBase);
 
 		int numOfThreads = 4;
 		SudokuThreadManager threadManager = new SudokuThreadManager(dataBase, numOfThreads);
-		long startTimeMillis = System.currentTimeMillis();
+//		long startTimeMillis = System.currentTimeMillis();
 		threadManager.solve(5, TimeUnit.SECONDS);
-		Long executionTimeMillis = System.currentTimeMillis() - startTimeMillis;
-		
-		String htmlFileName = "after.html";
-		String html = dataBase.toHTML(lookUpId + " - MultiThread", executionTimeMillis.toString() + " ms");
-		CommonTestUtils.saveHTMLFileAsOutput(htmlFileName, html);
-		CommonTestUtils.openHTMLFileInBrowser(htmlFileName);
+//		Long executionTimeMillis = System.currentTimeMillis() - startTimeMillis;
 
 		// test output
-//		File answerFile = CommonTestUtils.getTestFile(fileInfo.getAnswerFilePath());
-//		List<String[]> expectedFields = CSVParser.parseFile(answerFile);
-//		SudokuCellDataBase expectedDataBase = SudokuCellDataBaseBuilder.buildDataBase(expectedFields, boardType);
-//		assertTrue(CommonTestUtils.compareCSVOutputs(dataBase, expectedDataBase));
+		File answerFile = CommonTestUtils.getTestFile(fileInfo.getAnswerFilePath());
+		List<String[]> expectedFields = CSVParser.parseFile(answerFile);
+		SudokuCellDataBase expectedDataBase = SudokuCellDataBaseBuilder.buildDataBase(expectedFields, boardType);
+		assertTrue(CommonTestUtils.compareCSVOutputs(dataBase, expectedDataBase));
 	}
 
 }

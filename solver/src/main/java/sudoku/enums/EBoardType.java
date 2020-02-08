@@ -15,7 +15,7 @@ public enum EBoardType {
 			}
 			break;
 		case HEXADOKU:
-			for (Integer i = 1; i <= n && i <= 9; i++) {
+			for (Integer i = 0; i <= n && i <= 9; i++) {
 				retVal.add(i.toString());
 			}
 			Character start = 'A';

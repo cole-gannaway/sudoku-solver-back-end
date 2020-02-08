@@ -59,6 +59,17 @@
 			"answer": {
 				"filepath": "16by16/Answers/EasyPuzzleAnswer.csv"
 			}
+		},
+		{
+			"id": "EasyPuzzle16by162",
+			"boardtype" : "Sudoku",
+			"puzzle": {
+				"filepath": "16by16/Puzzles/EasyPuzzle2.csv"
+			},
+			"answer": {
+				"filepath": "16by16/Answers/EasyPuzzleAnswer.csv"
+			}
 		}
+		
 	]
 }
