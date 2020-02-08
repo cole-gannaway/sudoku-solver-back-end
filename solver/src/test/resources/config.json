@@ -59,6 +59,16 @@
 			"answer": {
 				"filepath": "16by16/Answers/EasyPuzzleAnswer.csv"
 			}
+		},
+		{
+			"id": "EvilPuzzle16by16",
+			"boardtype": "Hexadoku",
+			"puzzle": {
+				"filepath": "16by16/Puzzles/EvilPuzzle.csv"
+			},
+			"answer": {
+				"filepath": "16by16/Answers/EvilPuzzleAnswer.csv"
+			}
 		}
 	]
 }
