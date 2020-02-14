@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public enum EBoardType {
-	SUDOKU("Sudoku"), HEXADOKU("Hexadoku");
+	SUDOKU("SUDOKU"), HEXADOKU("HEXADOKU");
 
 	private String value;
 
@@ -38,6 +38,16 @@ public enum EBoardType {
 
 	public String getValue() {
 		return value;
+	}
+
+	public static EBoardType getValueOf(String val) {
+		EBoardType boardType = null;
+		try {
+			boardType = EBoardType.valueOf(val.toUpperCase());
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return boardType;
 	}
 
 }

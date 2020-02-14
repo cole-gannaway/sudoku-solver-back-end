@@ -36,12 +36,19 @@ public class SudokuCellDataBase {
 	}
 
 	public void addCell(SudokuCoordinate coordinate) {
-		cells.put(coordinate, new SudokuCell(EBoardType.getPossibleCandidateValues(boardType, n)));
+		cells.put(coordinate, new SudokuCell(getPossibleCandidates()));
+	}
+
+	public List<String> getPossibleCandidates() {
+		return EBoardType.getPossibleCandidateValues(boardType, n);
 	}
 
 	public String getCellValue(SudokuCoordinate coordinate) {
 		String retVal = null;
 		SudokuCell cell = cells.get(coordinate);
+		if (cell == null) {
+			System.err.println("cell == null");
+		}
 		if (cell.isSolved()) {
 			retVal = cell.getValue();
 		}
@@ -169,8 +176,8 @@ public class SudokuCellDataBase {
 
 	}
 
-	public List<String[]> toCSV() {
-		List<String[]> retVal = new ArrayList<String[]>();
+	public List<List<String>> toCSV() {
+		List<List<String>> retVal = new ArrayList<List<String>>();
 		for (int x = 1; x <= n; x++) {
 			StringBuilder strBuilder = new StringBuilder();
 			for (int y = 1; y <= n; y++) {

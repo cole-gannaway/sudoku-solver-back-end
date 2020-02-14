@@ -50,7 +50,5 @@ public class SudokuCell {
 	public String toString() {
 		return value;
 	}
-	
-	
 
 }

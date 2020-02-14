@@ -21,9 +21,9 @@ import sudoku.parsing.CSVParser;
 public class SudokuCellDataBaseTest {
 
 	@Test
-	public void test9By9() throws IOException, InterruptedException {
+	public void testBuildDataBase() throws IOException, InterruptedException {
 		File testFile = CommonTestUtils.getTestFile("/9by9/Puzzles/EasyPuzzle.csv");
-		List<String[]> fields = CSVParser.parseFile(testFile);
+		List<List<String>> fields = CSVParser.parseFile(testFile);
 		SudokuCellDataBase dataBase = SudokuCellDataBaseBuilder.buildDataBase(fields, EBoardType.SUDOKU);
 		assertEquals(81, dataBase.size());
 	}

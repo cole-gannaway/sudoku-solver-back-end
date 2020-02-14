@@ -15,6 +15,7 @@ import org.json.simple.parser.ParseException;
 
 import sudoku.enums.EBoardType;
 import sudoku.enums.EConfigFileProperties;
+import sudoku.enums.EDifficulty;
 
 public class ConfigFileReader {
 	public static List<TestFileParsedInfo> readConfigFile(File configFile)
@@ -34,14 +35,14 @@ public class ConfigFileReader {
 			JSONObject testConfig = (JSONObject) it.next();
 			String id = (String) testConfig.get(EConfigFileProperties.ID.getValue());
 			String boardTypeStr = (String) testConfig.get(EConfigFileProperties.BOARDTYPE.getValue());
+			String difficultStr = (String) testConfig.get(EConfigFileProperties.DIFFICULTY.getValue());
 			String puzzleFilePath = getFilePath((JSONObject) testConfig.get(EConfigFileProperties.PUZZLE.getValue()));
 			String answerFilePath = getFilePath((JSONObject) testConfig.get(EConfigFileProperties.ANSWER.getValue()));
-			EBoardType boardType = null;
-			try {
-				boardType = EBoardType.valueOf(boardTypeStr.toUpperCase());
-			} catch (Exception e) {
-			}
-			TestFileParsedInfo testFileInfo = new TestFileParsedInfo(id, puzzleFilePath, answerFilePath, boardType);
+
+			EBoardType boardType = EBoardType.getValueOf(boardTypeStr);
+			EDifficulty difficulty = EDifficulty.getValueOf(difficultStr);
+			TestFileParsedInfo testFileInfo = new TestFileParsedInfo(id, puzzleFilePath, answerFilePath, boardType,
+					difficulty);
 			retVal.add(testFileInfo);
 		}
 

@@ -6,19 +6,21 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.List;
-import java.util.Optional;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
+import java.util.stream.Collectors;
 
 import org.json.simple.parser.ParseException;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import sudoku.common.test.utils.CommonTestUtils;
 import sudoku.elements.SudokuCellDataBase;
 import sudoku.elements.SudokuCellDataBaseBuilder;
 import sudoku.enums.EBoardType;
+import sudoku.enums.EDifficulty;
 import sudoku.parsing.CSVParser;
 import sudoku.parsing.config.ConfigFileReader;
 import sudoku.parsing.config.TestFileParsedInfo;
@@ -32,6 +34,7 @@ public class SudokuThreadManagerTest {
 	}
 
 	@Test
+	@Ignore
 	public void testTimeout() throws ExecutionException, TimeoutException {
 		int numOfThreads = 1;
 		SudokuCellDataBase db = CommonTestUtils.createFakeSudokuDataBase(9);
@@ -41,12 +44,38 @@ public class SudokuThreadManagerTest {
 
 	@Test
 	public void testSolveSingleThread() throws IOException {
+		// single test
+//		String lookUpId = "ImpossiblePuzzle";
+//		solveSingleThread(lookUpId);
+
+		// loop through
+		List<TestFileParsedInfo> list = configFileInfos.stream()
+				.filter(info -> !info.getDifficulty().equals(EDifficulty.EVIL))//
+				.collect(Collectors.toList());
+		for (TestFileParsedInfo info : list) {
+			solveSingleThread(info.getId());
+		}
+	}
+
+	@Test
+	@Ignore
+	public void testSolveMultiThread() throws IOException {
+		// single test
+//		String lookUpId = "HardPuzzle";
+//		solveMultiThread(lookUpId, 3);
+
+		// loop through
+		List<TestFileParsedInfo> list = configFileInfos.stream()
+				.filter(info -> !info.getDifficulty().equals(EDifficulty.EVIL))//
+				.collect(Collectors.toList());
+		for (TestFileParsedInfo info : list) {
+			solveMultiThread(info.getId(), 2);
+		}
+	}
+
+	private void solveSingleThread(String lookUpId) throws IOException {
 		// lookUp
-		String lookUpId = "EasyPuzzle16by16";
-		Optional<TestFileParsedInfo> optFileInfo = configFileInfos.stream()
-				.filter(info -> info.getId().equals(lookUpId)).findFirst();
-		assertTrue(optFileInfo.isPresent());
-		TestFileParsedInfo fileInfo = optFileInfo.get();
+		TestFileParsedInfo fileInfo = CommonTestUtils.getFirstTestFileInfoById(lookUpId, configFileInfos);
 
 		// get info from lookUp
 		EBoardType boardType = fileInfo.getBoardType();
@@ -54,8 +83,9 @@ public class SudokuThreadManagerTest {
 		File answerFile = CommonTestUtils.getTestFile(fileInfo.getAnswerFilePath());
 
 		// create database
-		List<String[]> fields = CSVParser.parseFile(testFile);
+		List<List<String>> fields = CSVParser.parseFile(testFile);
 		SudokuCellDataBase dataBase = SudokuCellDataBaseBuilder.buildDataBase(fields, boardType);
+		String beforeHTML = dataBase.toHTML();
 		CommonTestUtils.setCandidatesOnAllCells(dataBase);
 
 		// run threads
@@ -65,26 +95,23 @@ public class SudokuThreadManagerTest {
 		threadManager.solve(3, TimeUnit.SECONDS);
 		Long executionTimeMillis = System.currentTimeMillis() - startTimeMillis;
 
-		// show results
-		String htmlFileName = "after.html";
-		String html = dataBase.toHTML(lookUpId, executionTimeMillis.toString() + " ms");
-		CommonTestUtils.saveHTMLFileAsOutput(htmlFileName, html);
-		CommonTestUtils.openHTMLFileInBrowser(htmlFileName);
-
 		// verify output
-		List<String[]> expectedFields = CSVParser.parseFile(answerFile);
-		SudokuCellDataBase expectedDataBase = SudokuCellDataBaseBuilder.buildDataBase(expectedFields, boardType);
-		assertTrue(CommonTestUtils.compareCSVOutputs(dataBase, expectedDataBase));
+		List<List<String>> expectedFields = CSVParser.parseFile(answerFile);
+		System.out.println("Checking " + lookUpId + " against answer after " + executionTimeMillis + "ms");
+		List<List<String>> actualFields = dataBase.toCSV();
+		boolean verified = CommonTestUtils.compareCSVOutputs(actualFields, expectedFields);
+		if (!verified) {
+			// show output in browser
+			outputBeforeAndAfterHTML(beforeHTML, dataBase.toHTML());
+
+			System.out.println(CommonTestUtils.getTestValidityOutputString(actualFields));
+		}
+		assertTrue(verified);
 	}
 
-	@Test
-	public void testSolveMultiThread() throws IOException {
+	private void solveMultiThread(String lookUpId, int numOfThreads) throws IOException {
 		// lookUp
-		String lookUpId = "EasyPuzzle16by16";
-		Optional<TestFileParsedInfo> optFileInfo = configFileInfos.stream()
-				.filter(info -> info.getId().equals(lookUpId)).findFirst();
-		assertTrue(optFileInfo.isPresent());
-		TestFileParsedInfo fileInfo = optFileInfo.get();
+		TestFileParsedInfo fileInfo = CommonTestUtils.getFirstTestFileInfoById(lookUpId, configFileInfos);
 
 		// get info from lookUp
 		EBoardType boardType = fileInfo.getBoardType();
@@ -92,19 +119,39 @@ public class SudokuThreadManagerTest {
 		File answerFile = CommonTestUtils.getTestFile(fileInfo.getAnswerFilePath());
 
 		// create database
-		List<String[]> fields = CSVParser.parseFile(testFile);
+		List<List<String>> fields = CSVParser.parseFile(testFile);
 		SudokuCellDataBase dataBase = SudokuCellDataBaseBuilder.buildDataBase(fields, boardType);
+		String beforeHTML = dataBase.toHTML();
 		CommonTestUtils.setCandidatesOnAllCells(dataBase);
 
 		// run threads
-		int numOfThreads = 4;
 		SudokuThreadManager threadManager = new SudokuThreadManager(dataBase, numOfThreads);
+		long startTimeMillis = System.currentTimeMillis();
 		threadManager.solve(3, TimeUnit.SECONDS);
+		Long executionTimeMillis = System.currentTimeMillis() - startTimeMillis;
 
 		// verify output
-		List<String[]> expectedFields = CSVParser.parseFile(answerFile);
-		SudokuCellDataBase expectedDataBase = SudokuCellDataBaseBuilder.buildDataBase(expectedFields, boardType);
-		assertTrue(CommonTestUtils.compareCSVOutputs(dataBase, expectedDataBase));
+		List<List<String>> expectedFields = CSVParser.parseFile(answerFile);
+		System.out
+				.println("[Multithread] Checking " + lookUpId + " against answer after " + executionTimeMillis + "ms");
+		List<List<String>> actualFields = dataBase.toCSV();
+		boolean verified = CommonTestUtils.compareCSVOutputs(actualFields, expectedFields);
+		if (!verified) {
+			// show output in browser
+			outputBeforeAndAfterHTML(beforeHTML, dataBase.toHTML());
+
+			System.out.println(CommonTestUtils.getTestValidityOutputString(actualFields));
+		}
+		assertTrue(verified);
+
+	}
+
+	private void outputBeforeAndAfterHTML(String beforeHTML, String afterHTML) throws IOException {
+		CommonTestUtils.saveHTMLFileAsOutput("before.html", beforeHTML);
+		CommonTestUtils.openHTMLFileInBrowser("before.html");
+
+		CommonTestUtils.saveHTMLFileAsOutput("after.html", afterHTML);
+		CommonTestUtils.openHTMLFileInBrowser("after.html");
 	}
 
 }

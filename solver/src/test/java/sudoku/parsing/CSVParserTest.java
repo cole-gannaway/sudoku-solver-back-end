@@ -15,9 +15,9 @@ public class CSVParserTest {
 	@Test
 	public void testParseFile() throws FileNotFoundException {
 		File testFile = CommonTestUtils.getTestFile("/9by9/Puzzles/EasyPuzzle.csv");
-		List<String[]> fields = CSVParser.parseFile(testFile);
-		for (String[] row : fields) {
-			assertEquals(9, row.length);
+		List<List<String>> fields = CSVParser.parseFile(testFile);
+		for (List<String> row : fields) {
+			assertEquals(9, row.size());
 		}
 	}
 

@@ -5,10 +5,12 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.List;
+import java.util.Optional;
 
 import sudoku.elements.SudokuCellDataBase;
 import sudoku.elements.SudokuCoordinate;
 import sudoku.enums.EBoardType;
+import sudoku.parsing.config.TestFileParsedInfo;
 import sudoku.solving.utils.SudokuSolvingUtils;
 
 public class CommonTestUtils {
@@ -25,8 +27,39 @@ public class CommonTestUtils {
 
 	public static void saveHTMLFileAsOutput(String filePath, String htmlString) throws IOException {
 		File outputFile = CommonTestUtils.getTestFile("HTML/" + filePath);
+		writeStringToFile(outputFile, htmlString);
+	}
+
+	public static String getCSVOutputString(List<List<String>> fields) {
+		StringBuilder builder = new StringBuilder();
+		for (List<String> row : fields) {
+			for (int i = 0; i < row.size(); i++) {
+				builder.append(row.get(i));
+				if (i + 1 != row.size()) {
+					builder.append(",");
+				}
+			}
+			builder.append(System.lineSeparator());
+		}
+		return builder.toString();
+	}
+
+	public static String getTestValidityOutputString(List<List<String>> fields) {
+		StringBuilder builder = new StringBuilder();
+		for (List<String> row : fields) {
+			for (int i = 0; i < row.size(); i++) {
+				if (row.get(i).isBlank()) {
+					builder.append(" ");
+				}
+				builder.append(row.get(i));
+			}
+		}
+		return builder.toString();
+	}
+
+	public static void writeStringToFile(File outputFile, String outputStr) throws IOException {
 		FileOutputStream outputStream = new FileOutputStream(outputFile);
-		byte[] bytes = htmlString.getBytes();
+		byte[] bytes = outputStr.getBytes();
 		outputStream.write(bytes);
 		outputStream.close();
 	}
@@ -51,11 +84,19 @@ public class CommonTestUtils {
 		}
 	}
 
-	public static boolean compareCSVOutputs(SudokuCellDataBase actualDataBase, SudokuCellDataBase expectedDataBase) {
-		List<String[]> expectedList = actualDataBase.toCSV();
-		List<String[]> actualList = expectedList;
-		return expectedList.equals(actualList);
+	public static boolean compareCSVOutputs(List<List<String>> actualCSV, List<List<String>> expectedCSV) {
+		return actualCSV.equals(expectedCSV);
 	}
-	
-	
+
+	public static TestFileParsedInfo getFirstTestFileInfoById(String lookUpId,
+			List<TestFileParsedInfo> configFileInfos) {
+		Optional<TestFileParsedInfo> optFileInfo = configFileInfos.stream()
+				.filter(info -> info.getId().equals(lookUpId)).findFirst();
+
+		TestFileParsedInfo retVal = null;
+		if (optFileInfo.isPresent()) {
+			retVal = optFileInfo.get();
+		}
+		return retVal;
+	}
 }

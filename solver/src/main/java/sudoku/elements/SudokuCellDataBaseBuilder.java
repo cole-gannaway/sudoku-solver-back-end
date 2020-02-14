@@ -5,17 +5,17 @@ import java.util.List;
 import sudoku.enums.EBoardType;
 
 public class SudokuCellDataBaseBuilder {
-	public static SudokuCellDataBase buildDataBase(List<String[]> rows, EBoardType boardType) {
-		int n = rows.get(0).length;
+	public static SudokuCellDataBase buildDataBase(List<List<String>> fields, EBoardType boardType) {
+		int n = fields.get(0).size();
 		SudokuCellDataBase db = new SudokuCellDataBase(boardType, n);
 		int rowNum = 1;
 		int colNum = 1;
-		for (String[] row : rows) {
-			for (int i = 0; i < row.length; i++) {
+		for (List<String> row : fields) {
+			for (int i = 0; i < row.size(); i++) {
 				SudokuCoordinate coordinate = new SudokuCoordinate(rowNum, colNum);
 				db.addCell(coordinate);
-				if (!row[i].contentEquals("")) {
-					db.solveCell(coordinate, row[i]);
+				if (!row.get(i).contentEquals("")) {
+					db.solveCell(coordinate, row.get(i));
 				}
 				colNum++;
 			}

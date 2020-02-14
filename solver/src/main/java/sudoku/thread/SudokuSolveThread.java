@@ -8,6 +8,7 @@ import java.util.concurrent.TimeUnit;
 import sudoku.elements.SudokuCellDataBase;
 import sudoku.elements.SudokuCoordinate;
 import sudoku.enums.ESudokuSolveStep;
+import sudoku.solving.utils.NakedSetInfo;
 import sudoku.solving.utils.SudokuSolvingUtils;
 
 public class SudokuSolveThread implements Callable<Boolean> {
@@ -50,6 +51,15 @@ public class SudokuSolveThread implements Callable<Boolean> {
 						List<String> hiddenSet = SudokuSolvingUtils.findHiddenSet(db, coordinate);
 						if (hiddenSet != null) {
 							db.removeAllOtherCandidatesFromCell(coordinate, hiddenSet);
+						}
+						break;
+					case NAKEDSET:
+						NakedSetInfo nakedSet = SudokuSolvingUtils.findNakedSet(db, coordinate);
+						if (nakedSet != null) {
+							List<String> candidatesToRemove = nakedSet.getCandidates();
+							for (String candidate : candidatesToRemove) {
+								db.removeCandidateFromCell(coordinate, candidate);
+							}
 						}
 						break;
 					default:

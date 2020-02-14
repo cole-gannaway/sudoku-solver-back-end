@@ -104,19 +104,24 @@ public class SudokuSolvingUtils {
 		return list;
 	}
 
-	public static List<String> findHiddenSet(SudokuCellDataBase db, SudokuCoordinate coordinate) {
-		// generate all possible subsets of candidates
-		List<String> candidates = db.getCandidatesForCell(coordinate);
-		List<List<String>> subsets = new ArrayList<List<String>>();
+	private static List<List<String>> generateAllCombosOfCandidates(List<String> candidates) {
+		ArrayList<List<String>> allCombos = new ArrayList<List<String>>();
 		int n = candidates.size();
 		for (int r = 1; r <= n; r++) {
 			List<List<Integer>> combos = SudokuSolvingUtils.generateCombos(n, r);
 			List<List<String>> subset = combos.stream()
 					.map(list -> list.stream().map(index -> candidates.get(index)).collect(Collectors.toList()))
 					.collect(Collectors.toList());
-			subsets.addAll(subset);
+			allCombos.addAll(subset);
 		}
-		subsets.removeIf(subset-> subset.size() < 2);
+		return allCombos;
+	}
+
+	public static List<String> findHiddenSet(SudokuCellDataBase db, SudokuCoordinate coordinate) {
+		// generate all possible subsets of candidates
+		List<String> candidates = db.getCandidatesForCell(coordinate);
+		List<List<String>> subsets = generateAllCombosOfCandidates(candidates);
+		subsets.removeIf(subset -> subset.size() < 2);
 
 		// check all sections
 		List<String> retVal = null;
@@ -166,6 +171,74 @@ public class SudokuSolvingUtils {
 				return true;
 		}
 		return false;
+	}
 
+	public static NakedSetInfo findNakedSet(SudokuCellDataBase dataBase, SudokuCoordinate coordinate) {
+		NakedSetInfo nakedSet = null;
+		List<String> candidates = dataBase.getCandidatesForCell(coordinate);
+		List<List<String>> subsets = generateAllCombosOfCandidates(candidates);
+		Iterator<List<String>> subsetsIt = subsets.iterator();
+		ESudokuSection[] values = ESudokuSection.values();
+
+		while (subsetsIt.hasNext()) {
+			List<String> subset = subsetsIt.next();
+			for (int i = 0; i < values.length && (!isValidNakedSet(nakedSet, coordinate, candidates)); i++) {
+				ESudokuSection section = values[i];
+				List<SudokuCoordinate> coordinates = new ArrayList<SudokuCoordinate>();
+				// include coordinate in this one
+				coordinates.add(coordinate);
+				coordinates.addAll(dataBase.generateCoordinatesForSection(coordinate, Arrays.asList(section)));
+				nakedSet = findNakedSet(dataBase, coordinates, subset);
+				if (isValidNakedSet(nakedSet, coordinate, candidates)) {
+					return nakedSet;
+				}
+			}
+		}
+		return null;
+
+	}
+
+	private static boolean isValidNakedSet(NakedSetInfo nakedSet, SudokuCoordinate testCoord, List<String> candidates) {
+		if (nakedSet == null)
+			return false;
+		if (nakedSet.getCoordinates().size() < 2 || nakedSet.getCandidates().size() == 2)
+			return false;
+		if (nakedSet.containsCoordinate(testCoord))
+			return false;
+		if (!nakedSet.containsCommonCandidate(candidates))
+			return false;
+		return true;
+	}
+
+	private static NakedSetInfo findNakedSet(SudokuCellDataBase dataBase, List<SudokuCoordinate> coordinates,
+			List<String> candidates) {
+		Iterator<SudokuCoordinate> it = coordinates.iterator();
+		List<SudokuCoordinate> nakedSetCoords = new ArrayList<SudokuCoordinate>();
+		while (it.hasNext()) {
+			SudokuCoordinate coordinate = it.next();
+			List<String> coordinateCandidates = dataBase.getCandidatesForCell(coordinate);
+			// coordinateCandidates must be a subset of candidates
+			if (isSubset(candidates, coordinateCandidates)) {
+				nakedSetCoords.add(coordinate);
+			}
+		}
+		if (nakedSetCoords.size() == candidates.size()) {
+			NakedSetInfo nakedSet = new NakedSetInfo();
+			nakedSet.setCandidates(candidates);
+			nakedSet.setCoordinates(nakedSetCoords);
+			return nakedSet;
+		}
+		return null;
+	}
+
+	// test candidates contain any coordinate that is not in candidates
+	private static boolean isSubset(List<String> superSet, List<String> subSet) {
+		// every value of subset must be contained in superSet
+		for (String candidate : subSet) {
+			if (!superSet.contains(candidate)) {
+				return false;
+			}
+		}
+		return true;
 	}
 }
