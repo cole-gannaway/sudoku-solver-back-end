@@ -13,15 +13,15 @@ The following fields should be filled out for the system to read in .csv files a
     "testConfigs": [
 		{
 			"id": "exampleId",
-			"boardtype": "Sudoku/Hexadoku",
-			"difficulty" : "Easy/Medium/Hard/Evil",
+			"boardtype": "SUDOKU/HEXADOKU",
+			"difficulty" : "EASY/MEDIUM/HARD/EVIL",
 			"puzzle": {
 				"filepath": "exampleFilePath/Puzzle.csv"
 			},
 			"answer": {
 				"filepath": "exampleFilePath/Answer.csv"
 			}
-        },
+		},
     ]
 }
 ```
