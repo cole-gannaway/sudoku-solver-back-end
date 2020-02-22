@@ -112,6 +112,8 @@ public class SudokuSolvingUtilsTest {
 		// set up
 		int n = 9;
 		SudokuCellDataBase dataBase = CommonTestUtils.createFakeSudokuDataBase(n);
+
+		// generate coordinates for a square
 		SudokuCoordinate aCoordinate = new SudokuCoordinate(1, 1);
 		List<SudokuCoordinate> squareCoordinates = new ArrayList<SudokuCoordinate>();
 		squareCoordinates.add(aCoordinate);
@@ -119,36 +121,40 @@ public class SudokuSolvingUtilsTest {
 				.addAll(dataBase.generateCoordinatesForSection(aCoordinate, Arrays.asList(ESudokuSection.SQUARE)));
 		assertEquals(n, squareCoordinates.size());
 
-		// set up env
-		List<String> nakedSetCandidates = Arrays.asList("1", "3", "7", "9");
+		// disjoint set of coordinates
 		int four = 4;
-		List<SudokuCoordinate> nakedSetCoordinates = squareCoordinates.subList(0, four);
+		List<SudokuCoordinate> otherCoordinates = squareCoordinates.subList(0, four);
+		List<SudokuCoordinate> nakedSetCoordinates = squareCoordinates.subList(four, n);
+
+		// common candidates (1,7)
+		List<String> otherCandidates = Arrays.asList("1", "3", "7", "9");
+		List<String> nakedSetCandidates = Arrays.asList("1", "4", "5", "6", "7");
+
+		// remove candidates
 		for (SudokuCoordinate nakedSetCoordinate : nakedSetCoordinates) {
 			dataBase.removeAllOtherCandidatesFromCell(nakedSetCoordinate, nakedSetCandidates);
 		}
-		List<SudokuCoordinate> otherCoordinates = squareCoordinates.subList(four, n);
-		// should contain at list one of the nakedSetCandidates
-		List<String> otherCandidates = Arrays.asList("1", "4", "5", "6", "7");
 		for (SudokuCoordinate otherCoordinate : otherCoordinates) {
 			dataBase.removeAllOtherCandidatesFromCell(otherCoordinate, otherCandidates);
 		}
 
-		// set up function call
-		List<String> candidates = dataBase.getPossibleCandidates();
-		List<List<String>> subsets = new ArrayList<List<String>>();
-		for (int r = 1; r <= n; r++) {
-			List<List<Integer>> combos = SudokuSolvingUtils.generateCombos(n, r);
-			List<List<String>> subset = combos.stream()
-					.map(list -> list.stream().map(index -> candidates.get(index)).collect(Collectors.toList()))
-					.collect(Collectors.toList());
-			subsets.addAll(subset);
-		}
-
 		// call function
-		NakedSetInfo nakedSet = SudokuSolvingUtils.findNakedSet(dataBase, aCoordinate);
+		NakedSetInfo nakedSet = SudokuSolvingUtils.findNakedSetForCoordinate(dataBase, aCoordinate);
+
 		assertNotEquals(0, nakedSet.getCoordinates().size());
 		assertEquals(nakedSetCoordinates, nakedSet.getCoordinates());
 		assertEquals(nakedSetCandidates, nakedSet.getCandidates());
-
 	}
+
+	@Test
+	public void testGetSharedCandidates() {
+		List<String> list1 = Arrays.asList("1", "3", "7", "9");
+		List<String> list2 = Arrays.asList("1", "4", "5", "6", "7");
+		List<String> expectedSharedList = Arrays.asList("1", "7");
+
+		List<String> actualSharedList = SudokuSolvingUtils.getSharedCandidates(list1, list2);
+
+		assertEquals(expectedSharedList, actualSharedList);
+	}
+
 }

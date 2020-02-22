@@ -9,11 +9,11 @@ import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import org.json.simple.parser.ParseException;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import sudoku.common.test.utils.CommonTestUtils;
@@ -27,6 +27,9 @@ import sudoku.parsing.config.TestFileParsedInfo;
 
 public class SudokuThreadManagerTest {
 	private List<TestFileParsedInfo> configFileInfos;
+	private Predicate<? super TestFileParsedInfo> filterByDifficulty = info -> !info.getDifficulty()
+			.equals(EDifficulty.EVIL);
+	Predicate<? super TestFileParsedInfo> filterBySize = info -> !info.getId().contains("16by16");
 
 	@Before
 	public void setUp() throws FileNotFoundException, IOException, ParseException {
@@ -34,46 +37,46 @@ public class SudokuThreadManagerTest {
 	}
 
 	@Test
-	@Ignore
+//	@Ignore
 	public void testTimeout() throws ExecutionException, TimeoutException {
 		int numOfThreads = 1;
 		SudokuCellDataBase db = CommonTestUtils.createFakeSudokuDataBase(9);
 		SudokuThreadManager threadManager = new SudokuThreadManager(db, numOfThreads);
-		threadManager.solve(2, TimeUnit.SECONDS);
+		long startTimeMillis = System.currentTimeMillis();
+		TimeUnit timeUnit = TimeUnit.SECONDS;
+		int duration = 1;
+		threadManager.solve(duration, timeUnit);
+		Long executionTimeMillis = System.currentTimeMillis() - startTimeMillis;
+		assertTrue(executionTimeMillis > timeUnit.toMillis(duration));
 	}
 
 	@Test
+//	@Ignore
 	public void testSolveSingleThread() throws IOException {
-		// single test
-//		String lookUpId = "ImpossiblePuzzle";
-//		solveSingleThread(lookUpId);
-
-		// loop through
-		List<TestFileParsedInfo> list = configFileInfos.stream()
-				.filter(info -> !info.getDifficulty().equals(EDifficulty.EVIL))//
+		// test all filtered
+		List<TestFileParsedInfo> list = configFileInfos.stream()//
+				.filter(filterByDifficulty)//
+				.filter(filterBySize)//
 				.collect(Collectors.toList());
 		for (TestFileParsedInfo info : list) {
-			solveSingleThread(info.getId());
+			solve(info.getId(), 1, "[Single Thread]");
 		}
 	}
 
 	@Test
-	@Ignore
+//	@Ignore
 	public void testSolveMultiThread() throws IOException {
-		// single test
-//		String lookUpId = "HardPuzzle";
-//		solveMultiThread(lookUpId, 3);
-
-		// loop through
-		List<TestFileParsedInfo> list = configFileInfos.stream()
-				.filter(info -> !info.getDifficulty().equals(EDifficulty.EVIL))//
+		// test all filtered
+		List<TestFileParsedInfo> list = configFileInfos.stream()//
+				.filter(filterByDifficulty)//
+				.filter(filterBySize)//
 				.collect(Collectors.toList());
 		for (TestFileParsedInfo info : list) {
-			solveMultiThread(info.getId(), 2);
+			solve(info.getId(), 4, "[Multi Thread]");
 		}
 	}
 
-	private void solveSingleThread(String lookUpId) throws IOException {
+	private void solve(String lookUpId, int numOfThreads, String solveType) throws IOException {
 		// lookUp
 		TestFileParsedInfo fileInfo = CommonTestUtils.getFirstTestFileInfoById(lookUpId, configFileInfos);
 
@@ -85,60 +88,23 @@ public class SudokuThreadManagerTest {
 		// create database
 		List<List<String>> fields = CSVParser.parseFile(testFile);
 		SudokuCellDataBase dataBase = SudokuCellDataBaseBuilder.buildDataBase(fields, boardType);
-		String beforeHTML = dataBase.toHTML();
-		CommonTestUtils.setCandidatesOnAllCells(dataBase);
-
-		// run threads
-		int numOfThreads = 1;
-		SudokuThreadManager threadManager = new SudokuThreadManager(dataBase, numOfThreads);
-		long startTimeMillis = System.currentTimeMillis();
-		threadManager.solve(3, TimeUnit.SECONDS);
-		Long executionTimeMillis = System.currentTimeMillis() - startTimeMillis;
-
-		// verify output
-		List<List<String>> expectedFields = CSVParser.parseFile(answerFile);
-		System.out.println("Checking " + lookUpId + " against answer after " + executionTimeMillis + "ms");
-		List<List<String>> actualFields = dataBase.toCSV();
-		boolean verified = CommonTestUtils.compareCSVOutputs(actualFields, expectedFields);
-		if (!verified) {
-			// show output in browser
-			outputBeforeAndAfterHTML(beforeHTML, dataBase.toHTML());
-
-			System.out.println(CommonTestUtils.getTestValidityOutputString(actualFields));
-		}
-		assertTrue(verified);
-	}
-
-	private void solveMultiThread(String lookUpId, int numOfThreads) throws IOException {
-		// lookUp
-		TestFileParsedInfo fileInfo = CommonTestUtils.getFirstTestFileInfoById(lookUpId, configFileInfos);
-
-		// get info from lookUp
-		EBoardType boardType = fileInfo.getBoardType();
-		File testFile = CommonTestUtils.getTestFile(fileInfo.getPuzzleFilePath());
-		File answerFile = CommonTestUtils.getTestFile(fileInfo.getAnswerFilePath());
-
-		// create database
-		List<List<String>> fields = CSVParser.parseFile(testFile);
-		SudokuCellDataBase dataBase = SudokuCellDataBaseBuilder.buildDataBase(fields, boardType);
-		String beforeHTML = dataBase.toHTML();
+		String beforeHTML = dataBase.toHTML(lookUpId, "");
 		CommonTestUtils.setCandidatesOnAllCells(dataBase);
 
 		// run threads
 		SudokuThreadManager threadManager = new SudokuThreadManager(dataBase, numOfThreads);
 		long startTimeMillis = System.currentTimeMillis();
-		threadManager.solve(3, TimeUnit.SECONDS);
+		threadManager.solve(20, TimeUnit.SECONDS);
 		Long executionTimeMillis = System.currentTimeMillis() - startTimeMillis;
 
 		// verify output
 		List<List<String>> expectedFields = CSVParser.parseFile(answerFile);
-		System.out
-				.println("[Multithread] Checking " + lookUpId + " against answer after " + executionTimeMillis + "ms");
+		System.out.println(solveType + " Checking " + lookUpId + " against answer after " + executionTimeMillis + "ms");
 		List<List<String>> actualFields = dataBase.toCSV();
 		boolean verified = CommonTestUtils.compareCSVOutputs(actualFields, expectedFields);
 		if (!verified) {
 			// show output in browser
-			outputBeforeAndAfterHTML(beforeHTML, dataBase.toHTML());
+			outputBeforeAndAfterHTML(beforeHTML, dataBase.toHTML(lookUpId, executionTimeMillis.toString()));
 
 			System.out.println(CommonTestUtils.getTestValidityOutputString(actualFields));
 		}

@@ -12,13 +12,8 @@ public class NakedSetInfo {
 		return coordinates.contains(testCoord);
 	}
 
-	public boolean containsCommonCandidate(List<String> candidates) {
-		for (String candidate : candidates) {
-			if (candidates.contains(candidate)) {
-				return true;
-			}
-		}
-		return false;
+	public boolean containsCommonCandidate(List<String> pCandidates) {
+		return SudokuSolvingUtils.containsSharedCandidates(candidates, pCandidates);
 	}
 
 	public List<String> getCandidates() {

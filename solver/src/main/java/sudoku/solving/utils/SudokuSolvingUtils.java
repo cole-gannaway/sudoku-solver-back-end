@@ -11,7 +11,6 @@ import sudoku.elements.SudokuCoordinate;
 import sudoku.enums.ESudokuSection;
 
 public class SudokuSolvingUtils {
-
 	public static void setCandidates(SudokuCellDataBase db, SudokuCoordinate coordinate) {
 		for (ESudokuSection section : ESudokuSection.values()) {
 			List<SudokuCoordinate> otherCoordinates = db.generateCoordinatesForSection(coordinate,
@@ -173,22 +172,30 @@ public class SudokuSolvingUtils {
 		return false;
 	}
 
-	public static NakedSetInfo findNakedSet(SudokuCellDataBase dataBase, SudokuCoordinate coordinate) {
+	/*
+	 * Find a naked set with the following: (1) contains at least one common
+	 * candidate (2) does not contain the look up coordinate
+	 */
+	public static NakedSetInfo findNakedSetForCoordinate(SudokuCellDataBase dataBase, SudokuCoordinate coordinate) {
 		NakedSetInfo nakedSet = null;
 		List<String> candidates = dataBase.getCandidatesForCell(coordinate);
-		List<List<String>> subsets = generateAllCombosOfCandidates(candidates);
-		Iterator<List<String>> subsetsIt = subsets.iterator();
+		// get all possible candidate combinations
+		List<List<String>> allPossibleCandidateCombos = generateAllCombosOfCandidates(dataBase.getPossibleCandidates());
+		// filter combinations
+		List<List<String>> filteredCandidateCombos = filterPossibleNakedSetCandidates(allPossibleCandidateCombos,
+				candidates);
+		Iterator<List<String>> candidateCombosIt = filteredCandidateCombos.iterator();
 		ESudokuSection[] values = ESudokuSection.values();
 
-		while (subsetsIt.hasNext()) {
-			List<String> subset = subsetsIt.next();
+		while (candidateCombosIt.hasNext()) {
+			List<String> candidateCombo = candidateCombosIt.next();
 			for (int i = 0; i < values.length && (!isValidNakedSet(nakedSet, coordinate, candidates)); i++) {
 				ESudokuSection section = values[i];
 				List<SudokuCoordinate> coordinates = new ArrayList<SudokuCoordinate>();
 				// include coordinate in this one
 				coordinates.add(coordinate);
 				coordinates.addAll(dataBase.generateCoordinatesForSection(coordinate, Arrays.asList(section)));
-				nakedSet = findNakedSet(dataBase, coordinates, subset);
+				nakedSet = findNakedSet(dataBase, coordinates, candidateCombo);
 				if (isValidNakedSet(nakedSet, coordinate, candidates)) {
 					return nakedSet;
 				}
@@ -210,7 +217,7 @@ public class SudokuSolvingUtils {
 		return true;
 	}
 
-	private static NakedSetInfo findNakedSet(SudokuCellDataBase dataBase, List<SudokuCoordinate> coordinates,
+	static NakedSetInfo findNakedSet(SudokuCellDataBase dataBase, List<SudokuCoordinate> coordinates,
 			List<String> candidates) {
 		Iterator<SudokuCoordinate> it = coordinates.iterator();
 		List<SudokuCoordinate> nakedSetCoords = new ArrayList<SudokuCoordinate>();
@@ -240,5 +247,28 @@ public class SudokuSolvingUtils {
 			}
 		}
 		return true;
+	}
+
+	public static List<List<String>> filterPossibleNakedSetCandidates(List<List<String>> subsets,
+			List<String> origCandidates) {
+		return subsets.stream()//
+				.filter(candidates -> candidates.size() > 1)//
+				.filter(candidates -> containsSharedCandidates(origCandidates, candidates))//
+				.collect(Collectors.toList());
+
+	}
+
+	public static boolean containsSharedCandidates(List<String> origCandidates, List<String> testCandidates) {
+		for (String candidate : testCandidates) {
+			if (origCandidates.contains(candidate)) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	public static List<String> getSharedCandidates(List<String> a, List<String> b) {
+		List<String> aInB = a.stream().filter(candidate -> b.contains(candidate)).collect(Collectors.toList());
+		return aInB;
 	}
 }

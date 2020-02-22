@@ -126,7 +126,7 @@ public class SudokuCellDataBase {
 		return toHTML(null, null);
 	}
 
-	public String toHTML(String lookUpId, String string) {
+	public String toHTML(String lookUpId, String executionTime) {
 		StringBuilder strBuilder = new StringBuilder();
 		strBuilder.append("<html>");
 		strBuilder.append("<head>");
@@ -148,9 +148,9 @@ public class SudokuCellDataBase {
 			strBuilder.append(lookUpId);
 			strBuilder.append("</h1>");
 		}
-		if (string != null) {
+		if (executionTime != null) {
 			strBuilder.append("<p>");
-			strBuilder.append("Execution Time: " + string);
+			strBuilder.append("Execution Time: " + executionTime);
 			strBuilder.append("</p>");
 		}
 		strBuilder.append("<table border=\"1|0\">");
