@@ -6,9 +6,9 @@ import static org.junit.Assert.assertNotNull;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.text.ParseException;
 import java.util.List;
 
-import org.json.simple.parser.ParseException;
 import org.junit.Test;
 
 import sudoku.common.test.utils.CommonTestUtils;
@@ -23,9 +23,9 @@ public class ConfigFileReaderTest {
 
 		for (TestFileParsedInfo testFileInfo : testFiles) {
 			assertNotNull(testFileInfo.getId());
-			assertNotNull(testFileInfo.getBoardType());
-			assertNotNull(testFileInfo.getPuzzleFilePath());
-			assertNotNull(testFileInfo.getAnswerFilePath());
+			assertNotNull(testFileInfo.getBoardtype());
+			assertNotNull(testFileInfo.getPuzzle());
+			assertNotNull(testFileInfo.getAnswer());
 		}
 	}
 

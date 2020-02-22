@@ -5,6 +5,7 @@ import static org.junit.Assert.assertTrue;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.text.ParseException;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
@@ -12,7 +13,6 @@ import java.util.concurrent.TimeoutException;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
-import org.json.simple.parser.ParseException;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -81,9 +81,9 @@ public class SudokuThreadManagerTest {
 		TestFileParsedInfo fileInfo = CommonTestUtils.getFirstTestFileInfoById(lookUpId, configFileInfos);
 
 		// get info from lookUp
-		EBoardType boardType = fileInfo.getBoardType();
-		File testFile = CommonTestUtils.getTestFile(fileInfo.getPuzzleFilePath());
-		File answerFile = CommonTestUtils.getTestFile(fileInfo.getAnswerFilePath());
+		EBoardType boardType = fileInfo.getBoardtype();
+		File testFile = CommonTestUtils.getTestFile(fileInfo.getPuzzle().getFilepath());
+		File answerFile = CommonTestUtils.getTestFile(fileInfo.getAnswer().getFilepath());
 
 		// create database
 		List<List<String>> fields = CSVParser.parseFile(testFile);

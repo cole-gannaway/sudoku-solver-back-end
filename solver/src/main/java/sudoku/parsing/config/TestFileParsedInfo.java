@@ -5,38 +5,53 @@ import sudoku.enums.EDifficulty;
 
 public class TestFileParsedInfo {
 	private String id;
-	private String puzzleFilePath;
-	private String answerFilePath;
-	private EBoardType boardType;
+	private FileInfo puzzle;
+	private FileInfo answer;
+	private EBoardType boardtype;
 	private EDifficulty difficulty;
 
-	public TestFileParsedInfo(String id, String puzzleFilePath, String answerFilePath, EBoardType boardType,
-			EDifficulty difficulty) {
-		this.id = id;
-		this.puzzleFilePath = puzzleFilePath;
-		this.answerFilePath = answerFilePath;
-		this.boardType = boardType;
-		this.difficulty = difficulty;
+	TestFileParsedInfo() {
+
 	}
 
 	public String getId() {
 		return id;
 	}
 
-	public String getPuzzleFilePath() {
-		return puzzleFilePath;
+	public void setId(String id) {
+		this.id = id;
 	}
 
-	public String getAnswerFilePath() {
-		return answerFilePath;
+	public FileInfo getPuzzle() {
+		return puzzle;
 	}
 
-	public EBoardType getBoardType() {
-		return boardType;
+	public void setPuzzle(FileInfo puzzle) {
+		this.puzzle = puzzle;
+	}
+
+	public FileInfo getAnswer() {
+		return answer;
+	}
+
+	public void setAnswer(FileInfo answer) {
+		this.answer = answer;
+	}
+
+	public EBoardType getBoardtype() {
+		return boardtype;
+	}
+
+	public void setBoardtype(EBoardType boardType) {
+		this.boardtype = boardType;
 	}
 
 	public EDifficulty getDifficulty() {
 		return difficulty;
+	}
+
+	public void setDifficulty(EDifficulty difficulty) {
+		this.difficulty = difficulty;
 	}
 
 }
