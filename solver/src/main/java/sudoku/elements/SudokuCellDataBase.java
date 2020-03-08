@@ -9,11 +9,13 @@ import java.util.Map;
 import sudoku.enums.EBoardType;
 import sudoku.enums.ESudokuSection;
 import sudoku.parsing.CSVParser;
+import sudoku.solving.utils.SudokuSolvingUtils;
 
 public class SudokuCellDataBase {
 	private final int n;
 	private final EBoardType boardType;
 	private Map<SudokuCoordinate, SudokuCell> cells = new HashMap<SudokuCoordinate, SudokuCell>();
+	private List<List<String>> allCombosOfCandidates = null; 
 
 	public SudokuCellDataBase(EBoardType boardType, int n) {
 		this.n = n;
@@ -41,6 +43,13 @@ public class SudokuCellDataBase {
 
 	public List<String> getPossibleCandidates() {
 		return EBoardType.getPossibleCandidateValues(boardType, n);
+	}
+	
+	public List<List<String>> getAllCombosOfCandidates(){
+		if (allCombosOfCandidates == null) {
+			allCombosOfCandidates = SudokuSolvingUtils.generateAllCombosOfCandidates(getPossibleCandidates());
+		}
+		return allCombosOfCandidates;
 	}
 
 	public String getCellValue(SudokuCoordinate coordinate) {

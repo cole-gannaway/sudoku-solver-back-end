@@ -27,9 +27,8 @@ import sudoku.parsing.config.TestFileParsedInfo;
 
 public class SudokuThreadManagerTest {
 	private List<TestFileParsedInfo> configFileInfos;
-	private Predicate<? super TestFileParsedInfo> filterByDifficulty = info -> !info.getDifficulty()
-			.equals(EDifficulty.EVIL);
-	Predicate<? super TestFileParsedInfo> filterBySize = info -> !info.getId().contains("16by16");
+	private Predicate<TestFileParsedInfo> filterByDifficulty = info -> !info.getDifficulty().equals(EDifficulty.MEDIUM);
+	private Predicate<TestFileParsedInfo> filterByBoardType = info -> !info.getBoardtype().equals(EBoardType.HEXADOKU);
 
 	@Before
 	public void setUp() throws FileNotFoundException, IOException, ParseException {
@@ -37,7 +36,6 @@ public class SudokuThreadManagerTest {
 	}
 
 	@Test
-//	@Ignore
 	public void testTimeout() throws ExecutionException, TimeoutException {
 		int numOfThreads = 1;
 		SudokuCellDataBase db = CommonTestUtils.createFakeSudokuDataBase(9);
@@ -51,12 +49,10 @@ public class SudokuThreadManagerTest {
 	}
 
 	@Test
-//	@Ignore
 	public void testSolveSingleThread() throws IOException {
 		// test all filtered
 		List<TestFileParsedInfo> list = configFileInfos.stream()//
-				.filter(filterByDifficulty)//
-				.filter(filterBySize)//
+				.filter(filterByDifficulty.or(filterByBoardType).negate())//
 				.collect(Collectors.toList());
 		for (TestFileParsedInfo info : list) {
 			solve(info.getId(), 1, "[Single Thread]");
@@ -64,12 +60,10 @@ public class SudokuThreadManagerTest {
 	}
 
 	@Test
-//	@Ignore
 	public void testSolveMultiThread() throws IOException {
 		// test all filtered
 		List<TestFileParsedInfo> list = configFileInfos.stream()//
-				.filter(filterByDifficulty)//
-				.filter(filterBySize)//
+				.filter(filterByDifficulty.or(filterByBoardType))//
 				.collect(Collectors.toList());
 		for (TestFileParsedInfo info : list) {
 			solve(info.getId(), 4, "[Multi Thread]");
@@ -94,7 +88,7 @@ public class SudokuThreadManagerTest {
 		// run threads
 		SudokuThreadManager threadManager = new SudokuThreadManager(dataBase, numOfThreads);
 		long startTimeMillis = System.currentTimeMillis();
-		threadManager.solve(20, TimeUnit.SECONDS);
+		threadManager.solve(40, TimeUnit.SECONDS);
 		Long executionTimeMillis = System.currentTimeMillis() - startTimeMillis;
 
 		// verify output

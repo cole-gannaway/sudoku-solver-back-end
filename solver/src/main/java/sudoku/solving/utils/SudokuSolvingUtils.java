@@ -103,7 +103,7 @@ public class SudokuSolvingUtils {
 		return list;
 	}
 
-	private static List<List<String>> generateAllCombosOfCandidates(List<String> candidates) {
+	public static List<List<String>> generateAllCombosOfCandidates(List<String> candidates) {
 		ArrayList<List<String>> allCombos = new ArrayList<List<String>>();
 		int n = candidates.size();
 		for (int r = 1; r <= n; r++) {
@@ -180,7 +180,7 @@ public class SudokuSolvingUtils {
 		NakedSetInfo nakedSet = null;
 		List<String> candidates = dataBase.getCandidatesForCell(coordinate);
 		// get all possible candidate combinations
-		List<List<String>> allPossibleCandidateCombos = generateAllCombosOfCandidates(dataBase.getPossibleCandidates());
+		List<List<String>> allPossibleCandidateCombos = dataBase.getAllCombosOfCandidates();
 		// filter combinations
 		List<List<String>> filteredCandidateCombos = filterPossibleNakedSetCandidates(allPossibleCandidateCombos,
 				candidates);
