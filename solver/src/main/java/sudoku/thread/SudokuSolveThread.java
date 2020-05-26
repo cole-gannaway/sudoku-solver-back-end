@@ -8,7 +8,6 @@ import java.util.concurrent.TimeUnit;
 import sudoku.elements.SudokuCellDataBase;
 import sudoku.elements.SudokuCoordinate;
 import sudoku.enums.ESudokuSolveStep;
-import sudoku.solving.utils.NakedSetInfo;
 import sudoku.solving.utils.SudokuSolvingUtils;
 
 public class SudokuSolveThread implements Callable<Boolean> {
@@ -51,28 +50,6 @@ public class SudokuSolveThread implements Callable<Boolean> {
 						List<String> hiddenSet = SudokuSolvingUtils.findHiddenSet(db, coordinate);
 						if (hiddenSet != null) {
 							db.removeAllOtherCandidatesFromCell(coordinate, hiddenSet);
-						}
-						break;
-					case NAKEDSET:
-						NakedSetInfo nakedSet = SudokuSolvingUtils.findNakedSetForCoordinate(db, coordinate);
-						if (nakedSet != null) {
-							// remove only common candidates
-							List<String> nakedSetCandidates = nakedSet.getCandidates();
-							List<String> candidatesForCell = db.getCandidatesForCell(coordinate);
-							List<String> candidatesToRemove = SudokuSolvingUtils.getSharedCandidates(candidatesForCell,
-									nakedSetCandidates);
-							if (db.getPossibleCandidates().size() == 16) {
-								System.out.println("");
-								System.out.println(
-										"Look up coordinate: " + coordinate + " with candidates: " + candidatesForCell);
-								System.out.println("Naked Set coordinates: " + nakedSet.getCoordinates()
-										+ " with candidates: " + nakedSet.getCandidates());
-								System.out.println("Shared candidates are : " + candidatesToRemove);
-								System.out.println();
-							}
-							for (String candidateToRemove : candidatesToRemove) {
-								db.removeCandidateFromCell(coordinate, candidateToRemove);
-							}
 						}
 						break;
 					default:
