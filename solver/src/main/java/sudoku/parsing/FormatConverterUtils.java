@@ -14,7 +14,7 @@ public class FormatConverterUtils {
 		ObjectMapper mapper = new ObjectMapper();
 		mapper.enable(SerializationFeature.INDENT_OUTPUT);
 		List<List<String>> parsed = CSVParser.parseFile(f);
-		JSONBoardObject outputObj = new JSONBoardObject(parsed);
+		JSONBoardObject outputObj = new JSONBoardObject(parsed, null);
 		String outputJson = mapper.writeValueAsString(outputObj);
 		File outputFile = new File(f.getParent() + File.separator + f.getName().replace(".csv", ".json"));
 		FileUtils.writeStringToFile(outputFile, outputJson);

@@ -11,7 +11,6 @@ import com.google.gson.GsonBuilder;
 
 import sudoku.elements.SudokuCellDataBase;
 import sudoku.elements.SudokuCellDataBaseBuilder;
-import sudoku.enums.EBoardType;
 import sudoku.parsing.JSONBoardObject;
 import sudoku.thread.SudokuThreadManager;;
 
@@ -21,15 +20,14 @@ public class LambdaHandler implements RequestHandler<JSONBoardObject, String> {
 	@Override
 	public String handleRequest(JSONBoardObject request, Context context) {
 		LambdaLogger logger = context.getLogger();
-//		String response = new String("200 OK");
 		// log execution details
 		logger.log("ENVIRONMENT VARIABLES: " + gson.toJson(System.getenv()));
 		logger.log("CONTEXT: " + gson.toJson(context));
 		// process event
 		logger.log("EVENT: " + gson.toJson(request));
-		int n = 9;
-		List<String> possibleCandidateValues = EBoardType.getPossibleCandidateValues(EBoardType.SUDOKU, n);
-		SudokuCellDataBase db = SudokuCellDataBaseBuilder.buildDataBase(request.getRows(), possibleCandidateValues);
+		List<List<String>> board = request.getRows();
+		List<String> possibleCandidateValues = request.getPossibleValues();
+		SudokuCellDataBase db = SudokuCellDataBaseBuilder.buildDataBase(board, possibleCandidateValues);
 		SudokuThreadManager manager = new SudokuThreadManager(db, 1);
 		manager.solve(20, TimeUnit.SECONDS);
 		List<List<String>> result = db.toCSV();
