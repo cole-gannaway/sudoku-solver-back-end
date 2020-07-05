@@ -14,7 +14,7 @@ public class SudokuThreadManager {
 	int numOfThreads = 1;
 	SudokuCellDataBase db;
 
-	SudokuThreadManager(SudokuCellDataBase db, int numOfThreads) {
+	public SudokuThreadManager(SudokuCellDataBase db, int numOfThreads) {
 		this.numOfThreads = numOfThreads;
 		this.db = db;
 	}
