@@ -24,7 +24,8 @@ public class SudokuCellDataBaseTest {
 	public void testBuildDataBase() throws IOException, InterruptedException {
 		File testFile = CommonTestUtils.getTestFile("/9by9/Puzzles/EasyPuzzle.csv");
 		List<List<String>> fields = CSVParser.parseFile(testFile);
-		SudokuCellDataBase dataBase = SudokuCellDataBaseBuilder.buildDataBase(fields, EBoardType.SUDOKU);
+		List<String> possibleCandidateValues = Arrays.asList("1", "2", "3", "4", "5", "6", "7", "8", "9");
+		SudokuCellDataBase dataBase = SudokuCellDataBaseBuilder.buildDataBase(fields, possibleCandidateValues);
 		assertEquals(81, dataBase.size());
 	}
 

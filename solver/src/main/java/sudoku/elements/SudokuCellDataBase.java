@@ -6,20 +6,20 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import sudoku.enums.EBoardType;
 import sudoku.enums.ESudokuSection;
 import sudoku.parsing.CSVParser;
 import sudoku.solving.utils.SudokuSolvingUtils;
 
 public class SudokuCellDataBase {
 	private final int n;
-	private final EBoardType boardType;
+	/* Typically it is 1 - 9, but can be any unique identifiers */
+	private final List<String> possibleCandidateValues;
 	private Map<SudokuCoordinate, SudokuCell> cells = new HashMap<SudokuCoordinate, SudokuCell>();
-	private List<List<String>> allCombosOfCandidates = null; 
+	private List<List<String>> allCombosOfCandidates = null;
 
-	public SudokuCellDataBase(EBoardType boardType, int n) {
-		this.n = n;
-		this.boardType = boardType;
+	public SudokuCellDataBase(List<String> possibleCandidateValues) {
+		this.possibleCandidateValues = possibleCandidateValues;
+		this.n = possibleCandidateValues.size();
 	}
 
 	public void removeCandidateFromCell(SudokuCoordinate coordinate, String value) {
@@ -42,10 +42,11 @@ public class SudokuCellDataBase {
 	}
 
 	public List<String> getPossibleCandidates() {
-		return EBoardType.getPossibleCandidateValues(boardType, n);
+		// return deep copy
+		return new ArrayList<String>(possibleCandidateValues);
 	}
-	
-	public List<List<String>> getAllCombosOfCandidates(){
+
+	public List<List<String>> getAllCombosOfCandidates() {
 		if (allCombosOfCandidates == null) {
 			allCombosOfCandidates = SudokuSolvingUtils.generateAllCombosOfCandidates(getPossibleCandidates());
 		}

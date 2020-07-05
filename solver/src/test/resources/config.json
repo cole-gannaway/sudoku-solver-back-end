@@ -3,7 +3,7 @@
 		{
 			"id": "EasyPuzzle4by4",
 			"boardtype": "SUDOKU",
-			"difficulty" : "EASY",
+			"difficulty": "EASY",
 			"puzzle": {
 				"filepath": "4by4/Puzzles/EasyPuzzle.csv"
 			},
@@ -14,7 +14,7 @@
 		{
 			"id": "EasyPuzzle",
 			"boardtype": "SUDOKU",
-			"difficulty" : "EASY",
+			"difficulty": "EASY",
 			"puzzle": {
 				"filepath": "9by9/Puzzles/EasyPuzzle.csv"
 			},
@@ -25,7 +25,7 @@
 		{
 			"id": "MediumPuzzle",
 			"boardtype": "SUDOKU",
-			"difficulty" : "MEDIUM",
+			"difficulty": "MEDIUM",
 			"puzzle": {
 				"filepath": "9by9/Puzzles/MediumPuzzle.csv"
 			},
@@ -36,7 +36,7 @@
 		{
 			"id": "HardPuzzle",
 			"boardtype": "SUDOKU",
-			"difficulty" : "HARD",
+			"difficulty": "HARD",
 			"puzzle": {
 				"filepath": "9by9/Puzzles/HardPuzzle.csv"
 			},
@@ -47,7 +47,7 @@
 		{
 			"id": "EvilPuzzle",
 			"boardtype": "SUDOKU",
-			"difficulty" : "EVIL",
+			"difficulty": "EVIL",
 			"puzzle": {
 				"filepath": "9by9/Puzzles/EvilPuzzle.csv"
 			},
@@ -58,7 +58,7 @@
 		{
 			"id": "ImpossiblePuzzle",
 			"boardtype": "SUDOKU",
-			"difficulty" : "EVIL",
+			"difficulty": "EVIL",
 			"puzzle": {
 				"filepath": "9by9/Puzzles/ImpossiblePuzzle.csv"
 			},
@@ -69,13 +69,13 @@
 		{
 			"id": "EasyPuzzle16by16",
 			"boardtype": "HEXADOKU",
-			"difficulty" : "EASY",
+			"difficulty": "EASY",
 			"puzzle": {
 				"filepath": "16by16/Puzzles/EasyPuzzle.csv"
 			},
 			"answer": {
 				"filepath": "16by16/Answers/EasyPuzzleAnswer.csv"
 			}
-		},
+		}
 	]
 }

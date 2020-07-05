@@ -65,7 +65,8 @@ public class CommonTestUtils {
 	}
 
 	public static SudokuCellDataBase createFakeSudokuDataBase(int n) {
-		SudokuCellDataBase db = new SudokuCellDataBase(EBoardType.SUDOKU, n);
+		List<String> possibleCandidateValues = EBoardType.getPossibleCandidateValues(EBoardType.SUDOKU, n);
+		SudokuCellDataBase db = new SudokuCellDataBase(possibleCandidateValues);
 		for (int x = 1; x <= n; x++) {
 			for (int y = 1; y <= n; y++) {
 				db.addCell(new SudokuCoordinate(x, y));
