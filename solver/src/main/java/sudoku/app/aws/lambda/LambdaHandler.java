@@ -13,29 +13,41 @@ import com.google.gson.GsonBuilder;
 
 import sudoku.elements.SudokuCellDataBase;
 import sudoku.elements.SudokuCellDataBaseBuilder;
-import sudoku.parsing.JSONBoardObject;
+import sudoku.parsing.JSONBoardInformation;
 import sudoku.parsing.JSONResponse;
+import sudoku.parsing.JSONSolveConfigParameters;
+import sudoku.parsing.JSONSolveRequest;
 import sudoku.thread.SudokuThreadManager;;
 
-public class LambdaHandler implements RequestHandler<JSONBoardObject, String> {
+public class LambdaHandler implements RequestHandler<JSONSolveRequest, String> {
 	Gson gson = new GsonBuilder().setPrettyPrinting().create();
 
 	@Override
-	public String handleRequest(JSONBoardObject request, Context context) {
+	public String handleRequest(JSONSolveRequest request, Context context) {
 		LambdaLogger logger = context.getLogger();
+		
 		// log execution details
 		logger.log("ENVIRONMENT VARIABLES: " + gson.toJson(System.getenv()));
 		logger.log("CONTEXT: " + gson.toJson(context));
+		
 		// process event
 		logger.log("EVENT: " + gson.toJson(request));
+		
 		// get parameters
-		List<List<String>> board = request.getRows();
-		List<String> possibleCandidateValues = request.getPossibleValues();
+		JSONBoardInformation board = request.getBoard();
+		List<List<String>> boardValues = board.getRows();
+		List<String> possibleCandidateValues = board.getPossibleValues();
+
+		JSONSolveConfigParameters config = request.getConfig();
+		Integer numberOfThreads = config.getNumberOfThreads();
+		Integer timeoutSeconds = config.getTimeoutSeconds();
+		
 		// solve
-		SudokuCellDataBase db = SudokuCellDataBaseBuilder.buildDataBase(board, possibleCandidateValues);
-		SudokuThreadManager manager = new SudokuThreadManager(db, 1);
-		manager.solve(40, TimeUnit.SECONDS);
+		SudokuCellDataBase db = SudokuCellDataBaseBuilder.buildDataBase(boardValues, possibleCandidateValues);
+		SudokuThreadManager manager = new SudokuThreadManager(db, numberOfThreads);
+		manager.solve(timeoutSeconds, TimeUnit.SECONDS);
 		List<List<String>> resultingBoard = db.toCSV();
+		
 		// write out response
 		JSONResponse response = new JSONResponse("Success", resultingBoard);
 		ObjectMapper mapper = new ObjectMapper();

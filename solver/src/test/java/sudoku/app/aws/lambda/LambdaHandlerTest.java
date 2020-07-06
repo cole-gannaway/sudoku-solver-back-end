@@ -1,7 +1,12 @@
 package sudoku.app.aws.lambda;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -11,12 +16,13 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import sudoku.parsing.JSONResponse;
+import sudoku.parsing.JSONSolveRequest;
 
 public class LambdaHandlerTest {
-
+	private ObjectMapper mapper = new ObjectMapper();
+	
 	@Test
 	public void shouldCreateFakeJsonResponse() throws JsonProcessingException {
-		ObjectMapper mapper = new ObjectMapper();
 		List<List<String>> fakeResponse = new ArrayList<List<String>>();
 		for (int x = 0; x < 9; x++) {
 			fakeResponse.add(new ArrayList<String>());
@@ -27,7 +33,7 @@ public class LambdaHandlerTest {
 		}
 		JSONResponse boardObject = new JSONResponse("Success", fakeResponse);
 		String response = mapper.writeValueAsString(boardObject);
-		String expectedJSON = "{ \"message\": \"Success\" ,\"rows\":[[\"1\",\"2\",\"3\",\"4\",\"5\",\"6\",\"7\",\"8\",\"9\"],[\"1\",\"2\",\"3\",\"4\",\"5\",\"6\",\"7\",\"8\",\"9\"],[\"1\",\"2\",\"3\",\"4\",\"5\",\"6\",\"7\",\"8\",\"9\"],[\"1\",\"2\",\"3\",\"4\",\"5\",\"6\",\"7\",\"8\",\"9\"],[\"1\",\"2\",\"3\",\"4\",\"5\",\"6\",\"7\",\"8\",\"9\"],[\"1\",\"2\",\"3\",\"4\",\"5\",\"6\",\"7\",\"8\",\"9\"],[\"1\",\"2\",\"3\",\"4\",\"5\",\"6\",\"7\",\"8\",\"9\"],[\"1\",\"2\",\"3\",\"4\",\"5\",\"6\",\"7\",\"8\",\"9\"],[\"1\",\"2\",\"3\",\"4\",\"5\",\"6\",\"7\",\"8\",\"9\"]]}";
+		String expectedJSON = "{ \"rows\":[[\"1\",\"2\",\"3\",\"4\",\"5\",\"6\",\"7\",\"8\",\"9\"],[\"1\",\"2\",\"3\",\"4\",\"5\",\"6\",\"7\",\"8\",\"9\"],[\"1\",\"2\",\"3\",\"4\",\"5\",\"6\",\"7\",\"8\",\"9\"],[\"1\",\"2\",\"3\",\"4\",\"5\",\"6\",\"7\",\"8\",\"9\"],[\"1\",\"2\",\"3\",\"4\",\"5\",\"6\",\"7\",\"8\",\"9\"],[\"1\",\"2\",\"3\",\"4\",\"5\",\"6\",\"7\",\"8\",\"9\"],[\"1\",\"2\",\"3\",\"4\",\"5\",\"6\",\"7\",\"8\",\"9\"],[\"1\",\"2\",\"3\",\"4\",\"5\",\"6\",\"7\",\"8\",\"9\"],[\"1\",\"2\",\"3\",\"4\",\"5\",\"6\",\"7\",\"8\",\"9\"]]}";
 
 		String responseNoWhiteSpace = removeWhiteSpace(response);
 		String expectedNoWhiteSpace = removeWhiteSpace(expectedJSON);
@@ -46,6 +52,20 @@ public class LambdaHandlerTest {
 			}
 		}
 		return strBuilder.toString();
+	}
+	
+	@Test
+	public void shouldSolveEasy() throws IOException {
+		File inputFile = new File("src/test/resources/APIRequests/AWS_Lambda/HexadokuEasySolveRequest.json");
+		String fileAsStr = new String(Files.readAllBytes(Paths.get(inputFile.getPath())));
+		JSONSolveRequest request = mapper.readValue(fileAsStr, JSONSolveRequest.class);
+		assertNotNull(request);
+		
+		// internals
+		assertNotNull(request.getBoard());
+		
+		
+
 	}
 
 }
