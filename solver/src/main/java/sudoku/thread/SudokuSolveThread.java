@@ -40,10 +40,18 @@ public class SudokuSolveThread implements Callable<Boolean> {
 						SudokuSolvingUtils.setCandidates(db, coordinate);
 						break;
 					case UNIQUECANDIDATE:
-						String uniqueCandidate = SudokuSolvingUtils.hasUniqueCandidate(db, coordinate);
-						if (uniqueCandidate != null) {
-							db.solveCell(coordinate, uniqueCandidate);
+						List<String> candidatesForCell = db.getCandidatesForCell(coordinate);
+						// only 1 candidate left
+						if (candidatesForCell.size() == 1) {
+							db.solveCell(coordinate, candidatesForCell.get(0));
 							isSolved = true;
+						} // has a unique candidate in it's row, column, or square
+						else {
+							String uniqueCandidate = SudokuSolvingUtils.hasUniqueCandidate(db, coordinate);
+							if (uniqueCandidate != null) {
+								db.solveCell(coordinate, uniqueCandidate);
+								isSolved = true;
+							}
 						}
 						break;
 					case HIDDENSET:
