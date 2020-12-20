@@ -4,13 +4,10 @@ import java.util.List;
 
 public class JSONResponse {
 	private List<List<String>> rows;
+	private boolean solved;
 
 	/* Default constructor for Jackson JSON Parser */
 	public JSONResponse() {
-	}
-	
-	public JSONResponse(String message, List<List<String>> rows) {
-		this.rows = rows;
 	}
 
 	public List<List<String>> getRows() {
@@ -21,4 +18,11 @@ public class JSONResponse {
 		this.rows = rows;
 	}
 
+	public boolean isSolved() {
+		return solved;
+	}
+
+	public void setSolved(boolean solved) {
+		this.solved = solved;
+	}
 }

@@ -207,4 +207,15 @@ public class SudokuCellDataBase {
 
 	}
 
+	public boolean isSolved() {
+		Iterator<SudokuCell> it = cells.values().iterator();
+		while (it.hasNext()) {
+			SudokuCell sudokuCell =  it.next();
+			if (!sudokuCell.isSolved()) {
+				return false;
+			}
+		}
+		return true;
+	}
+
 }
