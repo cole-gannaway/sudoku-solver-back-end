@@ -1,4 +1,4 @@
-# Sudoku Solver Front-End Website
+# Sudoku Solver Back End
 
 The Sudoku Solver exhibits dynamic capabilities by efficiently solving up to **64 x 64** Sudoku puzzles from **EASY** up to **EXPERT**. Furthermore, it extends its functionality to encompass **Hexadoku** puzzles, which employ letters instead of numbers. The solver can execute in **parallel** using multiple threads on a single computer for maxium effeciency. Currently, it is hosted on the AWS Lambda platform. Test it out [here](https://www.colegannaway.com/sudoku-solver-front-end/). Finally, the solver can be easily tested locally by following the provided instructions, resulting in the generation of an HTML output for thorough evaluation.
 
