@@ -6,6 +6,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
+import java.util.StringJoiner;
 
 import sudoku.elements.SudokuCellDataBase;
 import sudoku.elements.SudokuCoordinate;
@@ -29,6 +30,25 @@ public class CommonTestUtils {
 		File outputFile = CommonTestUtils.getTestFile("HTML/" + filePath);
 		writeStringToFile(outputFile, htmlString);
 	}
+	
+	public static void saveCSVFileAsOutput(String filePath, List<List<String>> csvInfo) throws IOException {
+		File outputFile = CommonTestUtils.getTestFile("HTML/" + filePath);
+		writeStringToFile(outputFile, convertToCSV(csvInfo));
+	}
+	
+	public static String convertToCSV(List<List<String>> csvInfo) {
+        StringBuilder csvStringBuilder = new StringBuilder();
+
+        for (List<String> row : csvInfo) {
+            StringJoiner rowJoiner = new StringJoiner(",");
+            for (String cell : row) {
+                rowJoiner.add(cell);
+            }
+            csvStringBuilder.append(rowJoiner.toString()).append("\n");
+        }
+
+        return csvStringBuilder.toString();
+    }
 
 	public static String getCSVOutputString(List<List<String>> fields) {
 		StringBuilder builder = new StringBuilder();

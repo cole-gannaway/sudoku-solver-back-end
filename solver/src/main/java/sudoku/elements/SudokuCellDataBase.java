@@ -1,10 +1,12 @@
 package sudoku.elements;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import sudoku.enums.ESudokuSection;
 import sudoku.parsing.CSVParser;
@@ -71,6 +73,34 @@ public class SudokuCellDataBase {
 
 	public int size() {
 		return cells.size();
+	}
+	
+	public List<SudokuCoordinate> getAllUnsolvedCoordinates() {
+		List<SudokuCoordinate> retList = new ArrayList<>();
+		Set<SudokuCoordinate> keys = cells.keySet();
+		Iterator<SudokuCoordinate> it = keys.iterator();
+		while (it.hasNext()) {
+			SudokuCoordinate coord = it.next();
+			SudokuCell cell = cells.get(coord);
+			if (!cell.isSolved()) retList.add(coord);
+		}
+		return retList;
+	}
+	
+	/**
+	 * Check row column and square to see if the value already exists 
+	 * 
+	 * @param coord
+	 * @param value
+	 * @return
+	 */
+	public boolean isValidPlacement(SudokuCoordinate coord, String value) {
+		List<ESudokuSection> listOfSegments = Arrays.asList(ESudokuSection.ROW, ESudokuSection.COLUMN, ESudokuSection.SQUARE);
+		List<SudokuCoordinate> coordinatesForSections = generateCoordinatesForSection(coord, listOfSegments);
+		for (SudokuCoordinate testCoord : coordinatesForSections) {
+			if (cells.get(testCoord).getValue() == value) return false;
+		}
+		return true;
 	}
 
 	public List<List<SudokuCoordinate>> splitCoordinatesForNThreads(int n) {
